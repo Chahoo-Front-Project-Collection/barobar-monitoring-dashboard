@@ -1,7 +1,9 @@
 import { Navigate, createBrowserRouter } from "react-router";
 
 import { App } from "@/app/App";
-import { PlaceholderPage } from "@/app/router/PlaceholderPage";
+import { DashboardErrorDetailPage } from "@/pages/dashboard-error-detail/ui/DashboardErrorDetailPage";
+import { DashboardErrorsPage } from "@/pages/dashboard-errors/ui/DashboardErrorsPage";
+import { DashboardReplayDetailPage } from "@/pages/dashboard-replay-detail/ui/DashboardReplayDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -13,15 +15,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard/errors",
-        element: <PlaceholderPage title="Error list" />,
+        element: <DashboardErrorsPage />,
       },
       {
         path: "/dashboard/errors/:errorId",
-        element: <PlaceholderPage title="Error detail" />,
+        element: <DashboardErrorDetailPage />,
       },
       {
         path: "/dashboard/replays/:replayId",
-        element: <PlaceholderPage title="Replay detail" />,
+        element: <DashboardReplayDetailPage />,
       },
     ],
   },
