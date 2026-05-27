@@ -2,8 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router";
 
-import { DashboardReplayDetailPage } from "@/pages/dashboard-replay-detail/ui/DashboardReplayDetailPage";
-import { createReplayDetailFixture } from "@/shared/testing/fixtures";
+import { DashboardReplayDetailPage } from "@/pages/dashboard-replay-detail";
+import { createReplayDetailFixture } from "@/shared/testing";
 
 function renderPage(route = "/dashboard/replays/replay_abc123") {
   const queryClient = new QueryClient({
@@ -56,7 +56,10 @@ test("renders replay context, missing payload state, and recent HTTP requests", 
 });
 
 test("renders retry action when replay loading fails", async () => {
-  vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ message: "Replay not found" }, 404)));
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => jsonResponse({ message: "Replay not found" }, 404)),
+  );
 
   renderPage();
 

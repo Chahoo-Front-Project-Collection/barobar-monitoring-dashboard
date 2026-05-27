@@ -1,11 +1,7 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-import type {
-  ErrorDetail,
-  ErrorGroupFilters,
-  ErrorGroupsResponse,
-} from "@/entities/error/model/types";
-import { requestJson, type RequestJsonOptions } from "@/shared/api/http";
+import type { ErrorDetail, ErrorGroupFilters, ErrorGroupsResponse } from "@/entities/error";
+import { requestJson, type RequestJsonOptions } from "@/shared/api";
 
 export const errorQueryKeys = {
   all: ["errors"] as const,
@@ -13,10 +9,7 @@ export const errorQueryKeys = {
   detail: (errorId: string) => [...errorQueryKeys.all, "detail", errorId] as const,
 };
 
-export function fetchErrorGroups(
-  filters: ErrorGroupFilters = {},
-  options?: RequestJsonOptions,
-) {
+export function fetchErrorGroups(filters: ErrorGroupFilters = {}, options?: RequestJsonOptions) {
   return requestJson<ErrorGroupsResponse>("/api/admin/errors", {
     ...options,
     params: filters,

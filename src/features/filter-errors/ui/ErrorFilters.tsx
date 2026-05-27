@@ -1,4 +1,4 @@
-import type { ErrorGroupFilters } from "@/entities/error/model/types";
+import type { ErrorGroupFilters } from "@/entities/error";
 
 type ErrorFiltersProps = {
   filters: ErrorGroupFilters;

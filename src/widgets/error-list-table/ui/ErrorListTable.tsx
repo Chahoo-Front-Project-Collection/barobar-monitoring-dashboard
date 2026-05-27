@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-import type { ErrorGroup, ErrorGroupsResponse } from "@/entities/error/model/types";
+import type { ErrorGroup, ErrorGroupsResponse } from "@/entities/error";
 
 type ErrorListTableProps = {
   data: ErrorGroupsResponse;
@@ -70,7 +70,10 @@ function ErrorRow({ item }: { item: ErrorGroup }) {
   return (
     <tr className="border-t border-stone-200">
       <td className="max-w-[28rem] px-4 py-3 font-medium text-stone-950">
-        <Link className="underline decoration-stone-300 underline-offset-4" to={`/dashboard/errors/${item.id}`}>
+        <Link
+          className="underline decoration-stone-300 underline-offset-4"
+          to={`/dashboard/errors/${item.id}`}
+        >
           {item.message}
         </Link>
       </td>

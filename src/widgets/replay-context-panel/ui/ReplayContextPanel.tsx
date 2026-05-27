@@ -1,4 +1,4 @@
-import type { ReplayDetail } from "@/entities/replay/model/types";
+import type { ReplayDetail } from "@/entities/replay";
 
 type ReplayContextPanelProps = {
   replay: ReplayDetail;
@@ -41,7 +41,10 @@ export function ReplayContextPanel({ replay }: ReplayContextPanelProps) {
         ) : (
           <div className="mt-3 grid gap-2">
             {replay.http_requests.map((request, index) => (
-              <div className="border border-stone-200 p-3 text-sm" key={`${request.method}-${request.url}-${index}`}>
+              <div
+                className="border border-stone-200 p-3 text-sm"
+                key={`${request.method}-${request.url}-${index}`}
+              >
                 <div className="flex items-center justify-between gap-3">
                   <span className="font-semibold text-stone-950">{request.method}</span>
                   {request.status_code ? (

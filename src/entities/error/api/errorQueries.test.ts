@@ -1,5 +1,5 @@
-import { fetchErrorDetail, fetchErrorGroups } from "@/entities/error/api/errorQueries";
-import { createErrorDetailFixture, createErrorGroupsFixture } from "@/shared/testing/fixtures";
+import { fetchErrorDetail, fetchErrorGroups } from "@/entities/error";
+import { createErrorDetailFixture, createErrorGroupsFixture } from "@/shared/testing";
 
 test("fetchErrorGroups calls the Admin errors endpoint with filters", async () => {
   const response = createErrorGroupsFixture();

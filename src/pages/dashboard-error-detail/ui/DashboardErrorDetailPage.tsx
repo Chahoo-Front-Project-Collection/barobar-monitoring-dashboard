@@ -1,8 +1,8 @@
 import { AlertTriangle, ArrowLeft, RefreshCw } from "lucide-react";
 import { Link, useParams } from "react-router";
 
-import { useErrorDetail } from "@/entities/error/api/errorQueries";
-import { ErrorDetailPanel } from "@/widgets/error-detail-panel/ui/ErrorDetailPanel";
+import { useErrorDetail } from "@/entities/error";
+import { ErrorDetailPanel } from "@/widgets/error-detail-panel";
 
 export function DashboardErrorDetailPage() {
   const { errorId = "" } = useParams();

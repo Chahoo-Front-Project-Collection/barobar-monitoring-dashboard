@@ -1,9 +1,9 @@
 import { Navigate, createBrowserRouter } from "react-router";
 
 import { App } from "@/app/App";
-import { DashboardErrorDetailPage } from "@/pages/dashboard-error-detail/ui/DashboardErrorDetailPage";
-import { DashboardErrorsPage } from "@/pages/dashboard-errors/ui/DashboardErrorsPage";
-import { DashboardReplayDetailPage } from "@/pages/dashboard-replay-detail/ui/DashboardReplayDetailPage";
+import { DashboardErrorDetailPage } from "@/pages/dashboard-error-detail";
+import { DashboardErrorsPage } from "@/pages/dashboard-errors";
+import { DashboardReplayDetailPage } from "@/pages/dashboard-replay-detail";
 
 export const router = createBrowserRouter([
   {

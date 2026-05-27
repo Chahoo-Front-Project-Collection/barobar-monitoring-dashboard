@@ -3,8 +3,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router";
 
-import { DashboardErrorDetailPage } from "@/pages/dashboard-error-detail/ui/DashboardErrorDetailPage";
-import { createErrorDetailFixture } from "@/shared/testing/fixtures";
+import { DashboardErrorDetailPage } from "@/pages/dashboard-error-detail";
+import { createErrorDetailFixture } from "@/shared/testing";
 
 function renderPage(route = "/dashboard/errors/error_abc123") {
   const queryClient = new QueryClient({
@@ -46,7 +46,9 @@ test("renders error metadata and occurrence events", async () => {
 
   renderPage();
 
-  expect(await screen.findByRole("heading", { name: "Request failed with status code 500" })).toBeVisible();
+  expect(
+    await screen.findByRole("heading", { name: "Request failed with status code 500" }),
+  ).toBeVisible();
   expect(screen.getByText("https://service.example.com/orders")).toBeVisible();
   expect(screen.getByText("/api/orders")).toBeVisible();
   expect(screen.getByText("local-dev")).toBeVisible();
@@ -65,7 +67,10 @@ test("renders error metadata and occurrence events", async () => {
 
 test("renders retry and back actions when detail loading fails", async () => {
   const user = userEvent.setup();
-  vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ message: "Error group not found" }, 404)));
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => jsonResponse({ message: "Error group not found" }, 404)),
+  );
 
   const { router } = renderPage();
 

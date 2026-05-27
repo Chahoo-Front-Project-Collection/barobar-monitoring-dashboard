@@ -1,4 +1,4 @@
-import { MONITORING_API_BASE_URL } from "@/shared/config/env";
+import { MONITORING_API_BASE_URL } from "@/shared/config";
 
 export type QueryParams = Record<string, string | number | boolean | null | undefined>;
 
@@ -59,7 +59,9 @@ async function readErrorMessage(response: Response) {
   const contentType = response.headers.get("Content-Type") ?? "";
 
   if (contentType.includes("application/json")) {
-    const body = (await response.json().catch(() => undefined)) as { message?: unknown } | undefined;
+    const body = (await response.json().catch(() => undefined)) as
+      | { message?: unknown }
+      | undefined;
 
     if (typeof body?.message === "string" && body.message.length > 0) {
       return body.message;

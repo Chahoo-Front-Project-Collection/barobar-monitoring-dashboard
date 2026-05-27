@@ -2,10 +2,9 @@ import { AlertTriangle, RefreshCw } from "lucide-react";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router";
 
-import { useErrorGroups } from "@/entities/error/api/errorQueries";
-import type { ErrorGroupFilters } from "@/entities/error/model/types";
-import { ErrorFilters } from "@/features/filter-errors/ui/ErrorFilters";
-import { ErrorListTable } from "@/widgets/error-list-table/ui/ErrorListTable";
+import { useErrorGroups, type ErrorGroupFilters } from "@/entities/error";
+import { ErrorFilters } from "@/features/filter-errors";
+import { ErrorListTable } from "@/widgets/error-list-table";
 
 const DEFAULT_PAGE_SIZE = 20;
 
@@ -29,7 +28,9 @@ export function DashboardErrorsPage() {
       />
 
       {query.isPending ? (
-        <div className="border border-stone-200 bg-white p-8 text-sm text-stone-600">Loading errors...</div>
+        <div className="border border-stone-200 bg-white p-8 text-sm text-stone-600">
+          Loading errors...
+        </div>
       ) : query.isError ? (
         <div className="flex items-start justify-between gap-4 border border-red-200 bg-red-50 p-4">
           <div className="flex gap-3">

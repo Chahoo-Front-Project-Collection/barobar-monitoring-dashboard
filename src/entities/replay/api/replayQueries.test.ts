@@ -1,5 +1,5 @@
-import { fetchReplayDetail } from "@/entities/replay/api/replayQueries";
-import { createReplayDetailFixture } from "@/shared/testing/fixtures";
+import { fetchReplayDetail } from "@/entities/replay";
+import { createReplayDetailFixture } from "@/shared/testing";
 
 test("fetchReplayDetail calls the Admin replay detail endpoint", async () => {
   const response = createReplayDetailFixture();

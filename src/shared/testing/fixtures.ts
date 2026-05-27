@@ -1,9 +1,4 @@
-import type { ErrorDetail, ErrorGroupsResponse } from "@/entities/error/model/types";
-import type { ReplayDetail } from "@/entities/replay/model/types";
-
-export function createErrorGroupsFixture(
-  overrides: Partial<ErrorGroupsResponse> = {},
-): ErrorGroupsResponse {
+export function createErrorGroupsFixture(overrides = {}) {
   return {
     items: [
       {
@@ -29,7 +24,7 @@ export function createErrorGroupsFixture(
   };
 }
 
-export function createErrorDetailFixture(overrides: Partial<ErrorDetail> = {}): ErrorDetail {
+export function createErrorDetailFixture(overrides = {}) {
   return {
     ...createErrorGroupsFixture().items[0],
     stack: "Error: Request failed\n    at OrdersPage",
@@ -54,7 +49,7 @@ export function createErrorDetailFixture(overrides: Partial<ErrorDetail> = {}): 
   };
 }
 
-export function createReplayDetailFixture(overrides: Partial<ReplayDetail> = {}): ReplayDetail {
+export function createReplayDetailFixture(overrides = {}) {
   return {
     id: "replay_abc123",
     tenant_id: "demo",

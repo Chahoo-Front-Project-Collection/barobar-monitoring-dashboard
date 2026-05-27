@@ -1,5 +1,5 @@
-import type { ErrorDetail } from "@/entities/error/model/types";
-import { ReplayLink } from "@/features/navigate-to-replay/ui/ReplayLink";
+import type { ErrorDetail } from "@/entities/error";
+import { ReplayLink } from "@/features/navigate-to-replay";
 
 type ErrorDetailPanelProps = {
   error: ErrorDetail;

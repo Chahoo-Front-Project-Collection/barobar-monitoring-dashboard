@@ -1,9 +1,9 @@
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import { useParams } from "react-router";
 
-import { useReplayDetail } from "@/entities/replay/api/replayQueries";
-import { ReplayContextPanel } from "@/widgets/replay-context-panel/ui/ReplayContextPanel";
-import { ReplayPlayerPanel } from "@/widgets/replay-player-panel/ui/ReplayPlayerPanel";
+import { useReplayDetail } from "@/entities/replay";
+import { ReplayContextPanel } from "@/widgets/replay-context-panel";
+import { ReplayPlayerPanel } from "@/widgets/replay-player-panel";
 
 export function DashboardReplayDetailPage() {
   const { replayId = "" } = useParams();

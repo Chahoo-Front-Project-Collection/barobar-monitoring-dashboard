@@ -3,8 +3,8 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router";
 
-import { DashboardErrorsPage } from "@/pages/dashboard-errors/ui/DashboardErrorsPage";
-import { createErrorGroupsFixture } from "@/shared/testing/fixtures";
+import { DashboardErrorsPage } from "@/pages/dashboard-errors";
+import { createErrorGroupsFixture } from "@/shared/testing";
 
 function renderPage(route = "/dashboard/errors") {
   const queryClient = new QueryClient({
@@ -12,9 +12,12 @@ function renderPage(route = "/dashboard/errors") {
       queries: { retry: false },
     },
   });
-  const router = createMemoryRouter([{ path: "/dashboard/errors", element: <DashboardErrorsPage /> }], {
-    initialEntries: [route],
-  });
+  const router = createMemoryRouter(
+    [{ path: "/dashboard/errors", element: <DashboardErrorsPage /> }],
+    {
+      initialEntries: [route],
+    },
+  );
 
   render(
     <QueryClientProvider client={queryClient}>
@@ -72,7 +75,10 @@ test("renders error groups using filters from the URL query string", async () =>
 
 test("submits filters back into the route search params", async () => {
   const user = userEvent.setup();
-  vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(createErrorGroupsFixture())));
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => jsonResponse(createErrorGroupsFixture())),
+  );
 
   const { router } = renderPage("/dashboard/errors");
 
@@ -107,7 +113,10 @@ test("renders an empty state when no error groups exist", async () => {
 });
 
 test("renders a retry action when error groups fail to load", async () => {
-  vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ message: "Database unavailable" }, 500)));
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => jsonResponse({ message: "Database unavailable" }, 500)),
+  );
 
   renderPage();
 

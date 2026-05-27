@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import { ReplayPlayerPanel } from "@/widgets/replay-player-panel/ui/ReplayPlayerPanel";
+import { ReplayPlayerPanel } from "@/widgets/replay-player-panel";
 
 test("renders a missing replay payload state when events are empty", () => {
   render(<ReplayPlayerPanel events={[]} />);

@@ -1,12 +1,16 @@
-import { ApiError, buildAdminApiUrl, requestJson } from "@/shared/api/http";
+import { ApiError, buildAdminApiUrl, requestJson } from "@/shared/api";
 
 test("buildAdminApiUrl joins the base URL, path, and non-empty query params", () => {
-  const url = buildAdminApiUrl("/api/admin/errors", {
-    tenant_id: "demo",
-    environment: "",
-    release: undefined,
-    page: 2,
-  }, "http://localhost:4000/");
+  const url = buildAdminApiUrl(
+    "/api/admin/errors",
+    {
+      tenant_id: "demo",
+      environment: "",
+      release: undefined,
+      page: 2,
+    },
+    "http://localhost:4000/",
+  );
 
   expect(url).toBe("http://localhost:4000/api/admin/errors?tenant_id=demo&page=2");
 });

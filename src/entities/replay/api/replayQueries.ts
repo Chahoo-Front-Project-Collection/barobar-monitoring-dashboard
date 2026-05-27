@@ -1,7 +1,7 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-import type { ReplayDetail } from "@/entities/replay/model/types";
-import { requestJson, type RequestJsonOptions } from "@/shared/api/http";
+import type { ReplayDetail } from "@/entities/replay";
+import { requestJson, type RequestJsonOptions } from "@/shared/api";
 
 export const replayQueryKeys = {
   all: ["replays"] as const,
