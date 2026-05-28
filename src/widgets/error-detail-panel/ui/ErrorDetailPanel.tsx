@@ -17,11 +17,11 @@ export function ErrorDetailPanel({
 }: ErrorDetailPanelProps) {
   return (
     <div className="grid gap-5">
-      <section className="border border-stone-200 bg-white p-5">
+      <section className="border border-subtle bg-surface p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase text-red-700">HTTP {error.status_code}</p>
-            <h1 className="mt-2 text-2xl font-semibold text-stone-950">{error.message}</h1>
+            <p className="text-sm font-semibold uppercase text-primary">HTTP {error.status_code}</p>
+            <h1 className="mt-2 text-2xl font-semibold text-text">{error.message}</h1>
           </div>
           <div className="grid grid-cols-2 gap-2 text-sm">
             <Badge label="Release" value={error.release} />
@@ -36,20 +36,20 @@ export function ErrorDetailPanel({
           <Metadata label="Occurrences" value={String(error.occurrence_count)} />
         </dl>
 
-        <pre className="mt-5 max-h-64 overflow-auto border border-stone-200 bg-stone-950 p-4 text-xs leading-6 text-stone-100">
+        <pre className="mt-5 max-h-64 overflow-auto border border-subtle bg-surface-strong p-4 text-xs leading-6 text-white">
           {error.stack}
         </pre>
       </section>
 
       {replaySection}
 
-      <section className="overflow-hidden border border-stone-200 bg-white">
-        <div className="border-b border-stone-200 px-4 py-3">
-          <h2 className="text-base font-semibold text-stone-950">Occurrence events</h2>
+      <section className="overflow-hidden border border-subtle bg-surface">
+        <div className="border-b border-subtle px-4 py-3">
+          <h2 className="text-base font-semibold text-text">Occurrence events</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse text-left text-sm">
-            <thead className="bg-stone-100 text-xs font-semibold uppercase text-stone-600">
+            <thead className="bg-surface-muted text-xs font-semibold uppercase text-text-muted">
               <tr>
                 <th className="px-4 py-3">Occurred</th>
                 <th className="px-4 py-3">User</th>
@@ -65,9 +65,9 @@ export function ErrorDetailPanel({
                 <tr
                   aria-selected={event.replay_id === selectedReplayId}
                   className={[
-                    "border-t border-stone-200",
-                    event.replay_id ? "cursor-pointer hover:bg-stone-50" : "",
-                    event.replay_id === selectedReplayId ? "bg-stone-100" : "",
+                    "border-t border-subtle",
+                    event.replay_id ? "cursor-pointer hover:bg-surface-muted" : "",
+                    event.replay_id === selectedReplayId ? "bg-surface-muted" : "",
                   ]
                     .filter(Boolean)
                     .join(" ")}
@@ -86,17 +86,17 @@ export function ErrorDetailPanel({
                   role={event.replay_id ? "button" : undefined}
                   tabIndex={event.replay_id ? 0 : undefined}
                 >
-                  <td className="px-4 py-3 text-stone-700">{formatDateTime(event.occurred_at)}</td>
-                  <td className="px-4 py-3 font-medium text-stone-950">{event.user_name}</td>
-                  <td className="px-4 py-3 text-stone-700">{event.company_name}</td>
-                  <td className="px-4 py-3 text-stone-700">
+                  <td className="px-4 py-3 text-text-muted">{formatDateTime(event.occurred_at)}</td>
+                  <td className="px-4 py-3 font-medium text-text">{event.user_name}</td>
+                  <td className="px-4 py-3 text-text-muted">{event.company_name}</td>
+                  <td className="px-4 py-3 text-text-muted">
                     {event.browser_name} {event.browser_version}
                   </td>
-                  <td className="px-4 py-3 text-stone-700">
+                  <td className="px-4 py-3 text-text-muted">
                     {event.os_name} {event.os_version}
                   </td>
-                  <td className="px-4 py-3 text-stone-700">{event.device_type}</td>
-                  <td className="px-4 py-3 font-mono text-xs text-stone-700">
+                  <td className="px-4 py-3 text-text-muted">{event.device_type}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-text-muted">
                     {event.replay_id || "—"}
                   </td>
                 </tr>
@@ -111,9 +111,9 @@ export function ErrorDetailPanel({
 
 function Badge({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-stone-200 px-3 py-2">
-      <p className="text-xs font-semibold uppercase text-stone-500">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-stone-950">{value}</p>
+    <div className="border border-subtle px-3 py-2">
+      <p className="text-xs font-semibold uppercase text-text-subtle">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-text">{value}</p>
     </div>
   );
 }
@@ -121,8 +121,8 @@ function Badge({ label, value }: { label: string; value: string }) {
 function Metadata({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase text-stone-500">{label}</dt>
-      <dd className="mt-1 break-all text-sm text-stone-900">{value}</dd>
+      <dt className="text-xs font-semibold uppercase text-text-subtle">{label}</dt>
+      <dd className="mt-1 break-all text-sm text-text">{value}</dd>
     </div>
   );
 }

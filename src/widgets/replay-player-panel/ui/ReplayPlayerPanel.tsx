@@ -27,14 +27,14 @@ export const REPLAY_PLAYER_HEIGHT = 520;
 
 const REPLAY_STATUS_TONE_CLASS = {
   amber: {
-    description: "text-amber-800",
-    section: "border-amber-200 bg-amber-50",
-    title: "text-amber-950",
+    description: "text-warning",
+    section: "border-warning bg-warning-soft",
+    title: "text-warning",
   },
   red: {
-    description: "text-red-800",
-    section: "border-red-200 bg-red-50",
-    title: "text-red-900",
+    description: "text-danger",
+    section: "border-danger bg-danger-soft",
+    title: "text-danger-strong",
   },
 } as const;
 

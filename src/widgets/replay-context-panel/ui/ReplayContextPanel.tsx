@@ -40,23 +40,23 @@ export function ReplayContextPanel({ className, replay }: ReplayContextPanelProp
 
         <AccordionSection title="Recent HTTP requests" defaultOpen>
           {replay.http_requests.length === 0 ? (
-            <p className="text-sm text-stone-600">No recent requests recorded.</p>
+            <p className="text-sm text-text-muted">No recent requests recorded.</p>
           ) : (
             <div className="grid gap-2">
               {replay.http_requests.map((request, index) => (
                 <div
-                  className="border border-stone-200 p-3 text-sm"
+                  className="border border-subtle p-3 text-sm"
                   key={`${request.method}-${request.url}-${index}`}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="font-semibold text-stone-950">{request.method}</span>
+                    <span className="font-semibold text-text">{request.method}</span>
                     {request.status_code ? (
-                      <span className="font-semibold text-red-700">{request.status_code}</span>
+                      <span className="font-semibold text-danger">{request.status_code}</span>
                     ) : null}
                   </div>
-                  <p className="mt-1 break-all text-stone-700">{request.url}</p>
+                  <p className="mt-1 break-all text-text-muted">{request.url}</p>
                   {request.duration_ms ? (
-                    <p className="mt-1 text-xs text-stone-500">{request.duration_ms}ms</p>
+                    <p className="mt-1 text-xs text-text-subtle">{request.duration_ms}ms</p>
                   ) : null}
                 </div>
               ))}
@@ -81,7 +81,7 @@ function AccordionSection({
   const panelId = useId();
 
   return (
-    <section className="flex min-h-0 shrink-0 flex-col border border-stone-200 bg-white">
+    <section className="flex min-h-0 shrink-0 flex-col border border-subtle bg-surface">
       <button
         aria-controls={panelId}
         aria-expanded={open}
@@ -89,11 +89,11 @@ function AccordionSection({
         onClick={() => setOpen((value) => !value)}
         type="button"
       >
-        <h2 className="text-base font-semibold text-stone-950">{title}</h2>
+        <h2 className="text-base font-semibold text-text">{title}</h2>
         <ChevronDown
           aria-hidden="true"
           className={[
-            "size-4 shrink-0 text-stone-500 transition-transform duration-200",
+            "size-4 shrink-0 text-text-subtle transition-transform duration-200",
             open ? "rotate-180" : "",
           ]
             .filter(Boolean)
@@ -101,7 +101,7 @@ function AccordionSection({
         />
       </button>
       {open ? (
-        <div id={panelId} className="min-h-0 border-t border-stone-200 px-4 py-4">
+        <div id={panelId} className="min-h-0 border-t border-subtle px-4 py-4">
           {children}
         </div>
       ) : null}
@@ -112,8 +112,8 @@ function AccordionSection({
 function Metadata({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase text-stone-500">{label}</dt>
-      <dd className="mt-1 break-all font-medium text-stone-900">{value}</dd>
+      <dt className="text-xs font-semibold uppercase text-text-subtle">{label}</dt>
+      <dd className="mt-1 break-all font-medium text-text">{value}</dd>
     </div>
   );
 }

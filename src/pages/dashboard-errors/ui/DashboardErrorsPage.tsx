@@ -17,8 +17,8 @@ export function DashboardErrorsPage() {
     <section className="grid gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold uppercase text-red-700">Frontend errors</p>
-          <h1 className="mt-1 text-3xl font-semibold text-stone-950">Errors</h1>
+          <p className="text-sm font-semibold uppercase text-primary">Frontend errors</p>
+          <h1 className="mt-1 text-3xl font-semibold text-text">Errors</h1>
         </div>
       </div>
 
@@ -28,20 +28,20 @@ export function DashboardErrorsPage() {
       />
 
       {query.isPending ? (
-        <div className="border border-stone-200 bg-white p-8 text-sm text-stone-600">
+        <div className="border border-subtle bg-surface p-8 text-sm text-text-muted">
           Loading errors...
         </div>
       ) : query.isError ? (
-        <div className="flex items-start justify-between gap-4 border border-red-200 bg-red-50 p-4">
+        <div className="flex items-start justify-between gap-4 border border-danger bg-danger-soft p-4">
           <div className="flex gap-3">
-            <AlertTriangle aria-hidden="true" className="mt-0.5 size-5 text-red-700" />
+            <AlertTriangle aria-hidden="true" className="mt-0.5 size-5 text-danger" />
             <div>
-              <p className="font-semibold text-red-950">Failed to load errors</p>
-              <p className="mt-1 text-sm text-red-800">{query.error.message}</p>
+              <p className="font-semibold text-danger-strong">Failed to load errors</p>
+              <p className="mt-1 text-sm text-danger">{query.error.message}</p>
             </div>
           </div>
           <button
-            className="inline-flex items-center gap-2 border border-red-300 bg-white px-3 py-2 text-sm font-semibold text-red-900"
+            className="inline-flex items-center gap-2 border border-danger bg-surface px-3 py-2 text-sm font-semibold text-danger-strong"
             onClick={() => void query.refetch()}
             type="button"
           >
