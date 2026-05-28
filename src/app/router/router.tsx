@@ -3,6 +3,7 @@ import { Navigate, createBrowserRouter } from "react-router";
 import { App } from "@/app/App";
 import { DashboardErrorDetailPage } from "@/pages/dashboard-error-detail";
 import { DashboardErrorsPage } from "@/pages/dashboard-errors";
+import routes from "./routes";
 
 export const router = createBrowserRouter([
   {
@@ -10,14 +11,14 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/dashboard/errors" replace />,
+        element: <Navigate to={routes.ERRORS.path} replace />,
       },
       {
-        path: "/dashboard/errors",
+        path: routes.ERRORS.path,
         element: <DashboardErrorsPage />,
       },
       {
-        path: "/dashboard/errors/:errorId",
+        path: routes.ERROR_DETAIL.path,
         element: <DashboardErrorDetailPage />,
       },
     ],
