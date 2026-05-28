@@ -68,13 +68,13 @@ test("renders error groups using filters from the URL query string", async () =>
   vi.stubGlobal("fetch", fetcher);
 
   renderPage(
-    "/dashboard/errors?tenant_id=demo&environment=production&release=local-dev&date_from=2026-05-27&date_to=2026-05-28&page=2",
+    "/dashboard/errors?tenant_id=demo&environment=production&version=3.2.0&date_from=2026-05-27&date_to=2026-05-28&page=2",
   );
 
   expect(await screen.findByRole("heading", { name: "Errors" })).toBeInTheDocument();
   expect(screen.getByLabelText("Tenant")).toHaveValue("demo");
   expect(screen.getByLabelText("Environment")).toHaveValue("production");
-  expect(screen.getByLabelText("Release")).toHaveValue("local-dev");
+  expect(screen.getByLabelText("Version")).toHaveValue("3.2.0");
   expect(
     await screen.findByRole("cell", { name: "Request failed with status code 500" }),
   ).toBeVisible();
@@ -85,7 +85,7 @@ test("renders error groups using filters from the URL query string", async () =>
   expect(requestedUrl.pathname).toBe("/api/admin/errors");
   expect(requestedUrl.searchParams.get("tenant_id")).toBe("demo");
   expect(requestedUrl.searchParams.get("environment")).toBe("production");
-  expect(requestedUrl.searchParams.get("release")).toBe("local-dev");
+  expect(requestedUrl.searchParams.get("version")).toBe("3.2.0");
   expect(requestedUrl.searchParams.get("date_from")).toBe("2026-05-27");
   expect(requestedUrl.searchParams.get("date_to")).toBe("2026-05-28");
   expect(requestedUrl.searchParams.get("page")).toBe("2");

@@ -106,7 +106,7 @@ function normalizeErrorGroup(value: unknown): ErrorGroup {
     page_url: readString(record, ["page_url", "pageUrl"]),
     request_url: readString(record, ["request_url", "requestUrl"]),
     status_code: readNumber(record, ["status_code", "statusCode"]),
-    release: readString(record, ["release"]),
+    version: readString(record, ["version"]),
     environment: readString(record, ["environment"]),
     occurrence_count: readNumber(record, ["occurrence_count", "occurrenceCount"]),
     first_seen_at: readString(record, ["first_seen_at", "firstSeenAt"]),

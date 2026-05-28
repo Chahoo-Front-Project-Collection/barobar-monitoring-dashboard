@@ -36,11 +36,11 @@ export function ErrorFilters({ filters, onApply }: ErrorFiltersProps) {
         </select>
       </label>
       <label className="grid gap-1 text-sm font-medium text-text-muted">
-        Release
+        Version
         <input
           className="h-10 border border-strong px-3 text-text outline-none focus:border-primary"
-          defaultValue={filters.release ?? ""}
-          name="release"
+          defaultValue={filters.version ?? ""}
+          name="version"
         />
       </label>
       <label className="grid gap-1 text-sm font-medium text-text-muted">
@@ -77,7 +77,7 @@ function readFiltersFromForm(form: HTMLFormElement): ErrorGroupFilters {
   return {
     tenant_id: readString(formData, "tenant_id"),
     environment: readString(formData, "environment"),
-    release: readString(formData, "release"),
+    version: readString(formData, "version"),
     date_from: readString(formData, "date_from"),
     date_to: readString(formData, "date_to"),
     page: 1,

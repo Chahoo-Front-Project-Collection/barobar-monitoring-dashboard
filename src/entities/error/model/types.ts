@@ -5,7 +5,7 @@ export type ErrorGroup = {
   page_url: string;
   request_url: string;
   status_code: number;
-  release: string;
+  version: string;
   environment: string;
   occurrence_count: number;
   first_seen_at: string;
@@ -46,7 +46,7 @@ export type ErrorDetail = ErrorGroup & {
 export type ErrorGroupFilters = {
   tenant_id?: string;
   environment?: string;
-  release?: string;
+  version?: string;
   date_from?: string;
   date_to?: string;
   page?: number;

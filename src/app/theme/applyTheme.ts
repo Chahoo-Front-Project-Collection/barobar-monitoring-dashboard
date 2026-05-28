@@ -1,6 +1,6 @@
 import { colors } from "@toss/tds-colors";
 
-const THEME_VARIABLES = {
+const SEMANTIC_THEME_VARIABLES = {
   "--color-page": colors.grey50,
   "--color-surface": colors.background,
   "--color-surface-muted": colors.grey100,
@@ -23,8 +23,16 @@ const THEME_VARIABLES = {
   "--color-scrollbar-thumb": colors.greyOpacity300,
 } as const;
 
+function toCssVariableName(key: string) {
+  return `--color-${key.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase()}`;
+}
+
 export function applyTheme(target: HTMLElement = document.documentElement) {
-  for (const [name, value] of Object.entries(THEME_VARIABLES)) {
+  for (const [key, value] of Object.entries(colors)) {
+    target.style.setProperty(toCssVariableName(key), value);
+  }
+
+  for (const [name, value] of Object.entries(SEMANTIC_THEME_VARIABLES)) {
     target.style.setProperty(name, value);
   }
 }

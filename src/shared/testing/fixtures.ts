@@ -8,7 +8,7 @@ export function createErrorGroupsFixture(overrides = {}) {
         page_url: "https://service.example.com/orders",
         request_url: "/api/orders",
         status_code: 500,
-        release: "local-dev",
+        version: "3.2.0",
         environment: "production",
         occurrence_count: 12,
         first_seen_at: "2026-05-27T09:00:00.000Z",

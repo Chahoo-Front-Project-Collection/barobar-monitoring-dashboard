@@ -63,7 +63,7 @@ function parseFilters(searchParams: URLSearchParams): ErrorGroupFilters {
   return {
     tenant_id: searchParams.get("tenant_id") ?? undefined,
     environment: searchParams.get("environment") ?? undefined,
-    release: searchParams.get("release") ?? undefined,
+    version: searchParams.get("version") ?? undefined,
     date_from: searchParams.get("date_from") ?? undefined,
     date_to: searchParams.get("date_to") ?? undefined,
     page: parsePositiveInteger(searchParams.get("page")) ?? 1,

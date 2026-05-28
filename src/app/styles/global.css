@@ -101,6 +101,14 @@ button:disabled {
     background-color: var(--color-warning-soft);
   }
 
+  .bg-grey-opacity50 {
+    background-color: var(--color-grey-opacity50);
+  }
+
+  .bg-grey-opacity100 {
+    background-color: var(--color-grey-opacity100);
+  }
+
   .text-text {
     color: var(--color-text);
   }

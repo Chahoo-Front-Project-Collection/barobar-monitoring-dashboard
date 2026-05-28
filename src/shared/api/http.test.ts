@@ -6,7 +6,7 @@ test("buildAdminApiUrl joins the base URL, path, and non-empty query params", ()
     {
       tenant_id: "demo",
       environment: "",
-      release: undefined,
+      version: undefined,
       page: 2,
     },
     "http://localhost:4000/",

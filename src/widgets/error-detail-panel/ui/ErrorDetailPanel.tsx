@@ -15,6 +15,16 @@ export function ErrorDetailPanel({
   selectedReplayId,
   onSelectReplayId,
 }: ErrorDetailPanelProps) {
+  const tableHeadings = [
+    { label: "Occurred", key: "occurred_at" },
+    { label: "User", key: "user_name" },
+    { label: "Company", key: "company_name" },
+    { label: "Browser", key: "browser_name" },
+    { label: "OS", key: "os_name" },
+    { label: "Device", key: "device_type" },
+    { label: "Replay ID", key: "replay_id" },
+  ];
+  console.log(error);
   return (
     <div className="grid gap-5">
       <section className="border border-subtle bg-surface p-5">
@@ -24,7 +34,7 @@ export function ErrorDetailPanel({
             <h1 className="mt-2 text-2xl font-semibold text-text">{error.message}</h1>
           </div>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <Badge label="Release" value={error.release} />
+            <Badge label="Version" value={error.version} />
             <Badge label="Environment" value={error.environment} />
           </div>
         </div>
@@ -51,13 +61,11 @@ export function ErrorDetailPanel({
           <table className="min-w-full border-collapse text-left text-sm">
             <thead className="bg-surface-muted text-xs font-semibold uppercase text-text-muted">
               <tr>
-                <th className="px-4 py-3">Occurred</th>
-                <th className="px-4 py-3">User</th>
-                <th className="px-4 py-3">Company</th>
-                <th className="px-4 py-3">Browser</th>
-                <th className="px-4 py-3">OS</th>
-                <th className="px-4 py-3">Device</th>
-                <th className="px-4 py-3">Replay ID</th>
+                {tableHeadings.map((heading) => (
+                  <th className="px-4 py-3" key={heading.key}>
+                    {heading.label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -66,8 +74,8 @@ export function ErrorDetailPanel({
                   aria-selected={event.replay_id === selectedReplayId}
                   className={[
                     "border-t border-subtle",
-                    event.replay_id ? "cursor-pointer hover:bg-surface-muted" : "",
-                    event.replay_id === selectedReplayId ? "bg-surface-muted" : "",
+                    event.replay_id ? "cursor-pointer" : "",
+                    event.replay_id === selectedReplayId ? "bg-grey-opacity50" : "",
                   ]
                     .filter(Boolean)
                     .join(" ")}

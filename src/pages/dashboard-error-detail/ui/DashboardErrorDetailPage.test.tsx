@@ -119,7 +119,7 @@ test("renders error metadata and occurrence events", async () => {
   ).toBeVisible();
   expect(screen.getByText("https://service.example.com/orders")).toBeVisible();
   expect(screen.getByText("/api/orders")).toBeVisible();
-  expect(screen.getByText("local-dev")).toBeVisible();
+  expect(screen.getByText("3.2.0")).toBeVisible();
   expect(screen.getByText("production")).toBeVisible();
   expect(screen.getAllByText("홍길동").length).toBeGreaterThan(0);
   expect(screen.getAllByText("고객사A").length).toBeGreaterThan(0);

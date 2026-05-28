@@ -29,7 +29,7 @@ test("fetchErrorGroups normalizes camelCase Admin error rows", async () => {
             pageUrl: "https://service.example.com/orders",
             requestUrl: "/api/orders",
             statusCode: 500,
-            release: "local-dev",
+            version: "3.2.0",
             environment: "production",
             occurrenceCount: 12,
             firstSeenAt: "2026-05-27T09:00:00.000Z",
