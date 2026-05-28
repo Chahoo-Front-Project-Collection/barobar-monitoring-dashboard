@@ -1,11 +1,20 @@
+import type { ReactNode } from "react";
+
 import type { ErrorDetail } from "@/entities/error";
-import { ReplayLink } from "@/features/navigate-to-replay";
 
 type ErrorDetailPanelProps = {
   error: ErrorDetail;
+  replaySection?: ReactNode;
+  selectedReplayId: string;
+  onSelectReplayId: (replayId: string) => void;
 };
 
-export function ErrorDetailPanel({ error }: ErrorDetailPanelProps) {
+export function ErrorDetailPanel({
+  error,
+  replaySection,
+  selectedReplayId,
+  onSelectReplayId,
+}: ErrorDetailPanelProps) {
   return (
     <div className="grid gap-5">
       <section className="border border-stone-200 bg-white p-5">
@@ -32,6 +41,8 @@ export function ErrorDetailPanel({ error }: ErrorDetailPanelProps) {
         </pre>
       </section>
 
+      {replaySection}
+
       <section className="overflow-hidden border border-stone-200 bg-white">
         <div className="border-b border-stone-200 px-4 py-3">
           <h2 className="text-base font-semibold text-stone-950">Occurrence events</h2>
@@ -46,12 +57,35 @@ export function ErrorDetailPanel({ error }: ErrorDetailPanelProps) {
                 <th className="px-4 py-3">Browser</th>
                 <th className="px-4 py-3">OS</th>
                 <th className="px-4 py-3">Device</th>
-                <th className="px-4 py-3">Replay</th>
+                <th className="px-4 py-3">Replay ID</th>
               </tr>
             </thead>
             <tbody>
               {error.events.map((event) => (
-                <tr className="border-t border-stone-200" key={event.id}>
+                <tr
+                  aria-selected={event.replay_id === selectedReplayId}
+                  className={[
+                    "border-t border-stone-200",
+                    event.replay_id ? "cursor-pointer hover:bg-stone-50" : "",
+                    event.replay_id === selectedReplayId ? "bg-stone-100" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  key={event.id}
+                  onClick={() => {
+                    if (event.replay_id) {
+                      onSelectReplayId(event.replay_id);
+                    }
+                  }}
+                  onKeyDown={(eventKey) => {
+                    if (event.replay_id && (eventKey.key === "Enter" || eventKey.key === " ")) {
+                      eventKey.preventDefault();
+                      onSelectReplayId(event.replay_id);
+                    }
+                  }}
+                  role={event.replay_id ? "button" : undefined}
+                  tabIndex={event.replay_id ? 0 : undefined}
+                >
                   <td className="px-4 py-3 text-stone-700">{formatDateTime(event.occurred_at)}</td>
                   <td className="px-4 py-3 font-medium text-stone-950">{event.user_name}</td>
                   <td className="px-4 py-3 text-stone-700">{event.company_name}</td>
@@ -62,8 +96,8 @@ export function ErrorDetailPanel({ error }: ErrorDetailPanelProps) {
                     {event.os_name} {event.os_version}
                   </td>
                   <td className="px-4 py-3 text-stone-700">{event.device_type}</td>
-                  <td className="px-4 py-3">
-                    <ReplayLink replayId={event.replay_id} />
+                  <td className="px-4 py-3 font-mono text-xs text-stone-700">
+                    {event.replay_id || "—"}
                   </td>
                 </tr>
               ))}

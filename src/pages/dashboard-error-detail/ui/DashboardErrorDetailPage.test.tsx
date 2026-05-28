@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router";
 
 import { DashboardErrorDetailPage } from "@/pages/dashboard-error-detail";
-import { createErrorDetailFixture } from "@/shared/testing";
+import { createErrorDetailFixture, createReplayDetailFixture } from "@/shared/testing";
 
 function renderPage(route = "/dashboard/errors/error_abc123") {
   const queryClient = new QueryClient({
@@ -57,9 +57,59 @@ beforeEach(() => {
 });
 
 test("renders error metadata and occurrence events", async () => {
-  const fetcher = vi.fn<typeof fetch>(async () =>
-    jsonResponse(apiSuccess(createErrorDetailFixture())),
-  );
+  const fetcher = vi
+    .fn<typeof fetch>()
+    .mockResolvedValueOnce(
+      jsonResponse(
+        apiSuccess(
+          createErrorDetailFixture({
+            events: [
+              {
+                id: "event_old",
+                session_id: "1716790000000-old",
+                user_id: "u_old",
+                user_name: "홍길동",
+                company_id: "c_001",
+                company_name: "고객사A",
+                browser_name: "Chrome",
+                browser_version: "124.0.0.0",
+                os_name: "macOS",
+                os_version: "14.4",
+                device_type: "Desktop",
+                occurred_at: "2026-05-27T09:59:59.000Z",
+                replay_id: "replay_old",
+              },
+              {
+                id: "event_new",
+                session_id: "1716790000000-new",
+                user_id: "u_123",
+                user_name: "홍길동",
+                company_id: "c_001",
+                company_name: "고객사A",
+                browser_name: "Chrome",
+                browser_version: "125.0.0.0",
+                os_name: "macOS",
+                os_version: "14.5",
+                device_type: "Desktop",
+                occurred_at: "2026-05-27T10:00:00.000Z",
+                replay_id: "replay_abc123",
+              },
+            ],
+          }),
+        ),
+      ),
+    )
+    .mockResolvedValueOnce(jsonResponse(apiSuccess(createReplayDetailFixture())))
+    .mockResolvedValueOnce(
+      jsonResponse(
+        apiSuccess(
+          createReplayDetailFixture({
+            id: "replay_old",
+            error_event_id: "event_old",
+          }),
+        ),
+      ),
+    );
   vi.stubGlobal("fetch", fetcher);
 
   renderPage();
@@ -71,14 +121,23 @@ test("renders error metadata and occurrence events", async () => {
   expect(screen.getByText("/api/orders")).toBeVisible();
   expect(screen.getByText("local-dev")).toBeVisible();
   expect(screen.getByText("production")).toBeVisible();
-  expect(screen.getByText("홍길동")).toBeVisible();
-  expect(screen.getByText("고객사A")).toBeVisible();
-  expect(screen.getByRole("link", { name: "Open replay" })).toHaveAttribute(
-    "href",
-    "/dashboard/replays/replay_abc123",
-  );
+  expect(screen.getAllByText("홍길동").length).toBeGreaterThan(0);
+  expect(screen.getAllByText("고객사A").length).toBeGreaterThan(0);
+  expect(screen.getByText("Latest replay")).toBeVisible();
+  expect(screen.getAllByText("Replay ID").length).toBeGreaterThan(0);
+  expect(screen.getAllByText("replay_abc123").length).toBeGreaterThan(0);
+  expect(await screen.findByText("Replay 데이터를 찾을 수 없습니다.")).toBeVisible();
+
+  const oldReplayRow = screen.getByRole("button", { name: /replay_old/i });
+  await userEvent.setup().click(oldReplayRow);
+
+  expect(await screen.findByText("Selected replay")).toBeVisible();
+  expect(screen.getAllByText("replay_old").length).toBeGreaterThan(0);
 
   expect(fetcher).toHaveBeenCalledWith("http://localhost:4000/api/admin/errors/error_abc123", {
+    headers: { Accept: "application/json" },
+  });
+  expect(fetcher).toHaveBeenLastCalledWith("http://localhost:4000/api/admin/replays/replay_old", {
     headers: { Accept: "application/json" },
   });
 });

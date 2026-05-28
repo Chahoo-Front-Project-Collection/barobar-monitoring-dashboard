@@ -23,6 +23,7 @@ type ReplayStatusMessage = {
 
 const EMPTY_REPLAY_EVENTS: unknown[] = [];
 const RRWEB_EVENT_TYPE_FULL_SNAPSHOT = 2;
+export const REPLAY_PLAYER_HEIGHT = 520;
 
 const REPLAY_STATUS_TONE_CLASS = {
   amber: {
@@ -59,7 +60,7 @@ export function ReplayPlayerPanel({ events }: ReplayPlayerPanelProps) {
         props: {
           events: replay.events as never[],
           width: Math.min(containerRef.current.clientWidth || 960, 960),
-          height: 520,
+          height: REPLAY_PLAYER_HEIGHT,
           autoPlay: false,
           showController: true,
           speedOption: [1, 2, 4],
@@ -85,11 +86,7 @@ export function ReplayPlayerPanel({ events }: ReplayPlayerPanelProps) {
     return <ReplayStatusMessage {...statusMessage} />;
   }
 
-  return (
-    <section className="border border-stone-200 bg-white p-3">
-      <div ref={containerRef} />
-    </section>
-  );
+  return <div ref={containerRef} className="h-full min-h-0" />;
 }
 
 function ReplayStatusMessage({ description, title, tone }: ReplayStatusMessage) {
@@ -97,7 +94,7 @@ function ReplayStatusMessage({ description, title, tone }: ReplayStatusMessage) 
 
   return (
     <section
-      className={`grid min-h-[360px] place-items-center border p-8 text-center ${toneClass.section}`}
+      className={`grid h-full min-h-0 place-items-center border p-8 text-center ${toneClass.section}`}
     >
       <div>
         <p className={`text-sm font-semibold ${toneClass.title}`}>{title}</p>

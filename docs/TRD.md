@@ -80,18 +80,7 @@ monitoring-dashboard는 다음 책임을 가지지 않는다.
 - message, stack, page_url, request_url, status_code 표시
 - 발생 이벤트 목록 표시
 - 각 이벤트의 사용자, 회사, 브라우저, OS, 디바이스 정보 표시
-- 연결된 replay 화면으로 이동
-
-### 3. Replay 재생
-
-```text
-/dashboard/replays/:replayId
-```
-
-역할:
-
-- replay metadata 조회
-- replay payload 조회
+- 최신 replay preview 표시
 - rrweb-player로 사용자 화면 흐름 재생
 - 에러 발생 시점 context 표시
 - recent HTTP requests 표시
@@ -103,7 +92,6 @@ monitoring-dashboard는 monitoring-server의 Admin API만 호출한다.
 - 필수:
   - GET /api/admin/errors
   - GET /api/admin/errors/:id
-  - GET /api/admin/replays/:id
 
 - 선택:
   - GET /api/admin/replays
@@ -315,7 +303,6 @@ src/
 - pages/
   - dashboard-errors/
   - dashboard-error-detail/
-  - dashboard-replay-detail/
 - widgets/
   - error-list-table/
   - error-detail-panel/
@@ -323,7 +310,6 @@ src/
   - replay-context-panel/
 - features/
   - filter-errors/
-  - navigate-to-replay/
 - entities/
   - error/
   - replay/
@@ -418,14 +404,16 @@ app -> pages -> widgets -> features -> entities -> shared
   - browser_name
   - os_name
   - device_type
-  - replay link
+  - replay_id
 
-### /dashboard/replays/:replayId
+### /dashboard/errors/:errorId
 
 필수 UI:
 
+- error summary
+- occurrence events
+- latest replay preview
 - replay player
-- 에러 요약
 - 사용자/회사 정보
 - 브라우저/OS/디바이스 정보
 - recent HTTP requests 목록
@@ -499,8 +487,8 @@ const API_BASE_URL = import.meta.env.VITE_MONITORING_API_BASE_URL;
 14. `GET /api/admin/errors/:id` 연동
 15. 에러 상세 정보 구현
 16. 발생 이벤트 목록 구현
-17. `/dashboard/replays/:replayId` route 생성
-18. `GET /api/admin/replays/:id` 연동
+17. `/dashboard/errors/:errorId`에 latest replay preview 추가
+18. `GET /api/admin/replays/:id`를 에러 상세에서 내부적으로 연동
 19. rrweb-player 연동
 20. replay context 패널 구현
 21. API 실패/빈 상태 UI 구현
@@ -513,6 +501,5 @@ const API_BASE_URL = import.meta.env.VITE_MONITORING_API_BASE_URL;
 - `/dashboard/errors`에서 에러 목록을 볼 수 있다.
 - tenant/environment/release/date 기준 필터링이 가능하다.
 - `/dashboard/errors/:errorId`에서 에러 상세와 발생 이벤트를 볼 수 있다.
-- 발생 이벤트에서 replay 화면으로 이동할 수 있다.
-- `/dashboard/replays/:replayId`에서 rrweb-player로 replay를 재생할 수 있다.
+- `/dashboard/errors/:errorId`에서 최신 replay preview와 rrweb-player를 볼 수 있다.
 - API 실패, replay 없음, 빈 목록 상태를 처리한다.
