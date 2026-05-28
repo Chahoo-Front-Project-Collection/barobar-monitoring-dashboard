@@ -1,6 +1,6 @@
-import { Link } from "react-router";
+import { useNavigate } from "react-router";
 
-import type { ErrorGroup, ErrorGroupsResponse } from "@/entities/error";
+import type { ErrorGroupsResponse } from "@/entities/error";
 
 type ErrorListTableProps = {
   data: ErrorGroupsResponse;
@@ -8,6 +8,8 @@ type ErrorListTableProps = {
 };
 
 export function ErrorListTable({ data, onPageChange }: ErrorListTableProps) {
+  const navigate = useNavigate();
+
   const { items, pagination } = data;
   const pageCount = Math.max(1, Math.ceil(pagination.total / pagination.page_size));
 
@@ -23,7 +25,7 @@ export function ErrorListTable({ data, onPageChange }: ErrorListTableProps) {
     <section className="overflow-hidden border border-subtle bg-surface">
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse text-left text-sm">
-          <thead className="bg-surface-muted text-xs font-semibold uppercase text-text-muted">
+          <thead className="bg-slate-200/50 text-xs font-semibold uppercase text-text-muted">
             <tr>
               <th className="px-4 py-3">Message</th>
               <th className="px-4 py-3">Status</th>
@@ -32,9 +34,21 @@ export function ErrorListTable({ data, onPageChange }: ErrorListTableProps) {
               <th className="px-4 py-3">Last seen</th>
             </tr>
           </thead>
+
           <tbody>
             {items.map((item) => (
-              <ErrorRow item={item} key={item.id} />
+              <tr
+                className="border-t border-subtle cursor-pointer hover:bg-slate-50"
+                onClick={() => {
+                  navigate(`/dashboard/errors/${item.id}`);
+                }}
+              >
+                <td className="max-w-md px-4 py-3 font-medium text-text">{item.message}</td>
+                <td className="px-4 py-3 text-danger">{item.status_code}</td>
+                <td className="px-4 py-3 text-text-muted">{item.request_url}</td>
+                <td className="px-4 py-3 text-text-muted">{item.occurrence_count}</td>
+                <td className="px-4 py-3 text-text-muted">{formatDateTime(item.last_seen_at)}</td>
+              </tr>
             ))}
           </tbody>
         </table>
@@ -66,25 +80,6 @@ export function ErrorListTable({ data, onPageChange }: ErrorListTableProps) {
   );
 }
 
-function ErrorRow({ item }: { item: ErrorGroup }) {
-  return (
-    <tr className="border-t border-subtle">
-      <td className="max-w-[28rem] px-4 py-3 font-medium text-text">
-        <Link
-          className="underline decoration-border-strong underline-offset-4"
-          to={`/dashboard/errors/${item.id}`}
-        >
-          {item.message}
-        </Link>
-      </td>
-      <td className="px-4 py-3 text-danger">{item.status_code}</td>
-      <td className="px-4 py-3 text-text-muted">{item.request_url}</td>
-      <td className="px-4 py-3 text-text-muted">{item.occurrence_count}</td>
-      <td className="px-4 py-3 text-text-muted">{formatDateTime(item.last_seen_at)}</td>
-    </tr>
-  );
-}
-
 function formatDateTime(value: string) {
   const date = new Date(value);
 
@@ -92,8 +87,15 @@ function formatDateTime(value: string) {
     return "Unknown";
   }
 
-  return new Intl.DateTimeFormat("en", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  const hours24 = date.getHours();
+  const period = hours24 >= 12 ? "PM" : "AM";
+  const hours12 = String(hours24 % 12 || 12).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${year}.${month}.${day} ${hours12}:${minutes}:${seconds} ${period}`;
 }
