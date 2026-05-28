@@ -17,7 +17,6 @@ export function DashboardErrorsPage() {
     <section className="grid gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold uppercase text-primary">Frontend errors</p>
           <h1 className="mt-1 text-3xl font-semibold text-text">Errors</h1>
         </div>
       </div>
