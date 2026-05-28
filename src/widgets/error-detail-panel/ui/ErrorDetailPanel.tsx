@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import type { ErrorDetail } from "@/entities/error";
+import { ChartNoAxesGantt } from "lucide-react";
 
 type ErrorDetailPanelProps = {
   error: ErrorDetail;
@@ -24,7 +25,21 @@ export function ErrorDetailPanel({
     { label: "Device", key: "device_type" },
     { label: "Replay ID", key: "replay_id" },
   ];
-  console.log(error);
+
+  const convertToCompanyName = (companyName: string) => {
+    const normalized = companyName.replace(/^barobar_/, "");
+
+    return normalized.toUpperCase();
+  };
+
+  const getBadgeColor = (companyName: string) => {
+    const companyColors: Record<string, string> = {
+      DEV_SSL: "bg-blue-500",
+    };
+
+    return companyColors[convertToCompanyName(companyName)] || "bg-gray-500";
+  };
+
   return (
     <div className="grid gap-5">
       <section className="border border-subtle bg-surface p-5">
@@ -34,8 +49,8 @@ export function ErrorDetailPanel({
             <h1 className="mt-2 text-2xl font-semibold text-text">{error.message}</h1>
           </div>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <Badge label="Version" value={error.version} />
-            <Badge label="Environment" value={error.environment} />
+            <Metadata label="Version" value={error.version} />
+            <Metadata label="Environment" value={error.environment} />
           </div>
         </div>
 
@@ -54,7 +69,8 @@ export function ErrorDetailPanel({
       {replaySection}
 
       <section className="overflow-hidden border border-subtle bg-surface">
-        <div className="border-b border-subtle px-4 py-3">
+        <div className="flex items-center gap-2 border-b border-subtle px-4 py-3">
+          <ChartNoAxesGantt className="size-5" />
           <h2 className="text-base font-semibold text-text">Occurrence events</h2>
         </div>
         <div className="overflow-x-auto">
@@ -96,7 +112,12 @@ export function ErrorDetailPanel({
                 >
                   <td className="px-4 py-3 text-text-muted">{formatDateTime(event.occurred_at)}</td>
                   <td className="px-4 py-3 font-medium text-text">{event.user_name}</td>
-                  <td className="px-4 py-3 text-text-muted">{event.company_name}</td>
+                  <td className="px-4 py-3 text-text-muted">
+                    <Badge
+                      label={convertToCompanyName(event.company_name)}
+                      color={getBadgeColor(event.company_name)}
+                    />
+                  </td>
                   <td className="px-4 py-3 text-text-muted">
                     {event.browser_name} {event.browser_version}
                   </td>
@@ -117,11 +138,10 @@ export function ErrorDetailPanel({
   );
 }
 
-function Badge({ label, value }: { label: string; value: string }) {
+function Badge({ label, color }: { label: string; color: string }) {
   return (
-    <div className="border border-subtle px-3 py-2">
-      <p className="text-xs font-semibold uppercase text-text-subtle">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-text">{value}</p>
+    <div className={`w-fit rounded-md px-2 py-1 ${color}`}>
+      <p className="text-xs font-bold uppercase  text-white">{label}</p>
     </div>
   );
 }
@@ -142,8 +162,15 @@ function formatDateTime(value: string) {
     return "Unknown";
   }
 
-  return new Intl.DateTimeFormat("en", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  const hours24 = date.getHours();
+  const period = hours24 >= 12 ? "PM" : "AM";
+  const hours12 = String(hours24 % 12 || 12).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${year}.${month}.${day} ${hours12}:${minutes}:${seconds} ${period}`;
 }

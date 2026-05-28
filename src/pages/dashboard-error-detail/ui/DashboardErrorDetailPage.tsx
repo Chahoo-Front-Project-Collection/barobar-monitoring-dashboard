@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowLeft, RefreshCw } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Play, RefreshCw } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
 
@@ -63,34 +63,23 @@ function DashboardErrorDetailContent({ errorId }: { errorId: string }) {
           error={query.data}
           onSelectReplayId={setSelectedReplayId}
           selectedReplayId={selectedReplayId}
-          replaySection={
-            activeReplayId ? (
-              <ReplaySection
-                replayId={activeReplayId}
-                title={
-                  activeReplayId === latestReplayEvent?.replay_id
-                    ? "Latest replay"
-                    : "Selected replay"
-                }
-              />
-            ) : null
-          }
+          replaySection={activeReplayId ? <ReplaySection replayId={activeReplayId} /> : null}
         />
       )}
     </section>
   );
 }
 
-function ReplaySection({ replayId, title }: { replayId: string; title: string }) {
+function ReplaySection({ replayId }: { replayId: string }) {
   const query = useReplayDetail(replayId);
 
   return (
     <section className="overflow-hidden border border-subtle bg-surface">
       <div className="border-b border-subtle px-4 py-3">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase text-primary">Session replay</p>
-            <h2 className="mt-1 text-base font-semibold text-text">{title}</h2>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex h-full items-center gap-2">
+            <Play className="size-5" />
+            <h2 className="text-base font-semibold text-text">Session replay</h2>
           </div>
           <div>
             <p className="text-xs font-semibold uppercase text-text-subtle">Replay ID</p>
@@ -107,7 +96,7 @@ function ReplaySection({ replayId, title }: { replayId: string; title: string })
         </div>
       ) : (
         <div
-          className="grid gap-5 py-4 pl-4 pr-2 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-stretch"
+          className="grid gap-5 py-4 pl-4 pr-2 lg:grid-cols-[minmax(0,1fr)_34rem] lg:items-stretch"
           style={{ height: "632px" }}
         >
           <div className="min-w-0">
