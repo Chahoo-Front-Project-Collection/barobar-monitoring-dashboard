@@ -22,6 +22,12 @@ export class ApiError extends Error {
   }
 }
 
+type ApiEnvelope<T> = {
+  success: boolean;
+  message: string;
+  data: T | null;
+};
+
 export function buildAdminApiUrl(
   path: string,
   params: QueryParams = {},
@@ -47,27 +53,38 @@ export async function requestJson<T>(
   const response = await fetcher(buildAdminApiUrl(path, params, baseUrl), {
     headers: { Accept: "application/json" },
   });
+  const body = await readJsonBody(response);
 
-  if (!response.ok) {
-    throw new ApiError(await readErrorMessage(response), response.status, response.statusText);
+  if (!isApiEnvelope<T>(body)) {
+    throw new ApiError("Unexpected API response format", response.status, response.statusText);
   }
 
-  return response.json() as Promise<T>;
+  if (!response.ok || !body.success) {
+    throw new ApiError(body.message, response.status, response.statusText);
+  }
+
+  return body.data as T;
 }
 
-async function readErrorMessage(response: Response) {
+async function readJsonBody(response: Response): Promise<unknown> {
   const contentType = response.headers.get("Content-Type") ?? "";
 
   if (contentType.includes("application/json")) {
-    const body = (await response.json().catch(() => undefined)) as
-      | { message?: unknown }
-      | undefined;
-
-    if (typeof body?.message === "string" && body.message.length > 0) {
-      return body.message;
-    }
+    return response.json().catch(() => undefined);
   }
 
-  const text = await response.text().catch(() => "");
-  return text.length > 0 ? text : response.statusText;
+  return undefined;
+}
+
+function isApiEnvelope<T>(value: unknown): value is ApiEnvelope<T> {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.success === "boolean" &&
+    typeof candidate.message === "string" &&
+    "data" in candidate
+  );
 }

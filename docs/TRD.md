@@ -108,6 +108,30 @@ monitoring-dashboard는 monitoring-server의 Admin API만 호출한다.
 - 선택:
   - GET /api/admin/replays
 
+### 공통 응답 형식
+
+모든 Admin API는 동일한 envelope를 반환한다. 화면 컴포넌트는 envelope를 직접 다루지 않고, dashboard API client가 `data`를 unwrap한다.
+
+성공:
+
+```json
+{
+  "success": true,
+  "message": "Errors fetched",
+  "data": {}
+}
+```
+
+실패:
+
+```json
+{
+  "success": false,
+  "message": "Error not found",
+  "data": null
+}
+```
+
 ### GET /api/admin/errors
 
 역할:
@@ -130,25 +154,30 @@ page_size
 
 ```json
 {
-  "items": [
-    {
-      "id": "error_abc123",
-      "tenant_id": "demo",
-      "message": "Request failed with status code 500",
-      "page_url": "https://service.example.com/orders",
-      "request_url": "/api/orders",
-      "status_code": 500,
-      "release": "local-dev",
-      "environment": "production",
-      "occurrence_count": 12,
-      "first_seen_at": "2026-05-27T09:00:00.000Z",
-      "last_seen_at": "2026-05-27T10:00:00.000Z"
+  "success": true,
+  "message": "Errors fetched",
+  "data": {
+    "items": [
+      {
+        "id": "error_abc123",
+        "tenant_id": "demo",
+        "message": "Request failed with status code 500",
+        "page_url": "https://service.example.com/orders",
+        "request_url": "/api/orders",
+        "status_code": 500,
+        "release": "local-dev",
+        "environment": "production",
+        "occurrence_count": 12,
+        "first_seen_at": "2026-05-27T09:00:00.000Z",
+        "last_seen_at": "2026-05-27T10:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 20,
+      "total": 1,
+      "total_pages": 1
     }
-  ],
-  "pagination": {
-    "page": 1,
-    "page_size": 20,
-    "total": 1
   }
 }
 ```
@@ -164,35 +193,39 @@ page_size
 
 ```json
 {
-  "id": "error_abc123",
-  "tenant_id": "demo",
-  "message": "Request failed with status code 500",
-  "stack": "...",
-  "page_url": "https://service.example.com/orders",
-  "request_url": "/api/orders",
-  "status_code": 500,
-  "release": "local-dev",
-  "environment": "production",
-  "occurrence_count": 12,
-  "first_seen_at": "2026-05-27T09:00:00.000Z",
-  "last_seen_at": "2026-05-27T10:00:00.000Z",
-  "events": [
-    {
-      "id": "event_abc123",
-      "session_id": "1716790000000-abc123",
-      "user_id": "u_123",
-      "user_name": "홍길동",
-      "company_id": "c_001",
-      "company_name": "고객사A",
-      "browser_name": "Chrome",
-      "browser_version": "125.0.0.0",
-      "os_name": "macOS",
-      "os_version": "14.5",
-      "device_type": "Desktop",
-      "occurred_at": "2026-05-27T10:00:00.000Z",
-      "replay_id": "replay_abc123"
-    }
-  ]
+  "success": true,
+  "message": "Error fetched",
+  "data": {
+    "id": "error_abc123",
+    "tenant_id": "demo",
+    "message": "Request failed with status code 500",
+    "stack": "...",
+    "page_url": "https://service.example.com/orders",
+    "request_url": "/api/orders",
+    "status_code": 500,
+    "release": "local-dev",
+    "environment": "production",
+    "occurrence_count": 12,
+    "first_seen_at": "2026-05-27T09:00:00.000Z",
+    "last_seen_at": "2026-05-27T10:00:00.000Z",
+    "events": [
+      {
+        "id": "event_abc123",
+        "session_id": "1716790000000-abc123",
+        "user_id": "u_123",
+        "user_name": "홍길동",
+        "company_id": "c_001",
+        "company_name": "고객사A",
+        "browser_name": "Chrome",
+        "browser_version": "125.0.0.0",
+        "os_name": "macOS",
+        "os_version": "14.5",
+        "device_type": "Desktop",
+        "occurred_at": "2026-05-27T10:00:00.000Z",
+        "replay_id": "replay_abc123"
+      }
+    ]
+  }
 }
 ```
 
@@ -220,47 +253,52 @@ page_size
 
 - 특정 replay metadata와 payload 조회
 - rrweb-player에 전달할 events 반환
+- `events`는 rrweb 재생을 위해 FullSnapshot 이벤트를 포함해야 한다.
 
 응답 예시:
 
 ```json
 {
-  "id": "replay_abc123",
-  "tenant_id": "demo",
-  "error_event_id": "event_abc123",
-  "duration_ms": 120000,
-  "created_at": "2026-05-27T10:00:01.000Z",
-  "error": {
-    "message": "Request failed with status code 500",
-    "status_code": 500,
-    "request_url": "/api/orders"
-  },
-  "context": {
-    "user": {
-      "user_id": "u_123",
-      "user_name": "홍길동"
+  "success": true,
+  "message": "Replay fetched",
+  "data": {
+    "id": "replay_abc123",
+    "tenant_id": "demo",
+    "error_event_id": "event_abc123",
+    "duration_ms": 120000,
+    "created_at": "2026-05-27T10:00:01.000Z",
+    "error": {
+      "message": "Request failed with status code 500",
+      "status_code": 500,
+      "request_url": "/api/orders"
     },
-    "company": {
-      "company_id": "c_001",
-      "company_name": "고객사A"
-    },
-    "client": {
-      "browser": {
-        "name": "Chrome",
-        "version": "125.0.0.0",
-        "user_agent": "..."
+    "context": {
+      "user": {
+        "user_id": "u_123",
+        "user_name": "홍길동"
       },
-      "os": {
-        "name": "macOS",
-        "version": "14.5"
+      "company": {
+        "company_id": "c_001",
+        "company_name": "고객사A"
       },
-      "device": {
-        "type": "Desktop"
+      "client": {
+        "browser": {
+          "name": "Chrome",
+          "version": "125.0.0.0",
+          "user_agent": "..."
+        },
+        "os": {
+          "name": "macOS",
+          "version": "14.5"
+        },
+        "device": {
+          "type": "Desktop"
+        }
       }
-    }
-  },
-  "http_requests": [],
-  "events": []
+    },
+    "http_requests": [],
+    "events": []
+  }
 }
 ```
 
@@ -407,6 +445,9 @@ API 요청 실패 시 다음 UI를 제공한다.
 
 replay payload 없음:
 - "Replay 데이터를 찾을 수 없습니다." 표시
+
+replay payload 불완전:
+- "Replay 데이터가 불완전합니다." 표시
 
 rrweb-player 재생 실패:
 - "Replay 재생 중 오류가 발생했습니다." 표시

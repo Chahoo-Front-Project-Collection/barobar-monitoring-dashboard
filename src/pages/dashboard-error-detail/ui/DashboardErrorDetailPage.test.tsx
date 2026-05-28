@@ -36,12 +36,30 @@ function jsonResponse(body: unknown, status = 200) {
   });
 }
 
+function apiSuccess<T>(data: T, message = "OK") {
+  return {
+    success: true,
+    message,
+    data,
+  };
+}
+
+function apiFailure(message: string) {
+  return {
+    success: false,
+    message,
+    data: null,
+  };
+}
+
 beforeEach(() => {
   vi.unstubAllGlobals();
 });
 
 test("renders error metadata and occurrence events", async () => {
-  const fetcher = vi.fn<typeof fetch>(async () => jsonResponse(createErrorDetailFixture()));
+  const fetcher = vi.fn<typeof fetch>(async () =>
+    jsonResponse(apiSuccess(createErrorDetailFixture())),
+  );
   vi.stubGlobal("fetch", fetcher);
 
   renderPage();
@@ -69,7 +87,7 @@ test("renders retry and back actions when detail loading fails", async () => {
   const user = userEvent.setup();
   vi.stubGlobal(
     "fetch",
-    vi.fn(async () => jsonResponse({ message: "Error group not found" }, 404)),
+    vi.fn(async () => jsonResponse(apiFailure("Error group not found"), 404)),
   );
 
   const { router } = renderPage();

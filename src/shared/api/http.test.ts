@@ -15,8 +15,14 @@ test("buildAdminApiUrl joins the base URL, path, and non-empty query params", ()
   expect(url).toBe("http://localhost:4000/api/admin/errors?tenant_id=demo&page=2");
 });
 
-test("requestJson returns parsed JSON from the configured Admin API", async () => {
-  const fetcher = vi.fn(async () => Response.json({ ok: true }));
+test("requestJson unwraps data from a successful API envelope", async () => {
+  const fetcher = vi.fn(async () =>
+    Response.json({
+      success: true,
+      message: "Errors fetched",
+      data: { ok: true },
+    }),
+  );
 
   const result = await requestJson<{ ok: boolean }>("/api/admin/errors", {
     baseUrl: "http://api.test",
@@ -30,14 +36,21 @@ test("requestJson returns parsed JSON from the configured Admin API", async () =
   });
 });
 
-test("requestJson throws ApiError when the server responds with a failure", async () => {
+test("requestJson throws ApiError when an API envelope reports a failure", async () => {
   const fetcher = vi.fn(
     async () =>
-      new Response(JSON.stringify({ message: "No replay" }), {
-        headers: { "Content-Type": "application/json" },
-        status: 404,
-        statusText: "Not Found",
-      }),
+      new Response(
+        JSON.stringify({
+          success: false,
+          message: "No replay",
+          data: null,
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+          status: 404,
+          statusText: "Not Found",
+        },
+      ),
   );
 
   await expect(
@@ -49,5 +62,27 @@ test("requestJson throws ApiError when the server responds with a failure", asyn
     message: "No replay",
     status: 404,
     statusText: "Not Found",
+  } satisfies Partial<ApiError>);
+});
+
+test("requestJson throws ApiError instead of returning malformed successful responses", async () => {
+  const fetcher = vi.fn(
+    async () =>
+      new Response(JSON.stringify([{ id: "error_abc123" }]), {
+        headers: { "Content-Type": "application/json" },
+        status: 200,
+        statusText: "OK",
+      }),
+  );
+
+  await expect(
+    requestJson("/api/admin/errors", {
+      baseUrl: "http://api.test",
+      fetcher,
+    }),
+  ).rejects.toMatchObject({
+    message: "Unexpected API response format",
+    status: 200,
+    statusText: "OK",
   } satisfies Partial<ApiError>);
 });

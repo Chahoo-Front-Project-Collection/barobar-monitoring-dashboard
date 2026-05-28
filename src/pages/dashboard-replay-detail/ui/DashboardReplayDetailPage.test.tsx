@@ -30,12 +30,30 @@ function jsonResponse(body: unknown, status = 200) {
   });
 }
 
+function apiSuccess<T>(data: T, message = "OK") {
+  return {
+    success: true,
+    message,
+    data,
+  };
+}
+
+function apiFailure(message: string) {
+  return {
+    success: false,
+    message,
+    data: null,
+  };
+}
+
 beforeEach(() => {
   vi.unstubAllGlobals();
 });
 
 test("renders replay context, missing payload state, and recent HTTP requests", async () => {
-  const fetcher = vi.fn<typeof fetch>(async () => jsonResponse(createReplayDetailFixture()));
+  const fetcher = vi.fn<typeof fetch>(async () =>
+    jsonResponse(apiSuccess(createReplayDetailFixture())),
+  );
   vi.stubGlobal("fetch", fetcher);
 
   renderPage();
@@ -58,7 +76,7 @@ test("renders replay context, missing payload state, and recent HTTP requests", 
 test("renders retry action when replay loading fails", async () => {
   vi.stubGlobal(
     "fetch",
-    vi.fn(async () => jsonResponse({ message: "Replay not found" }, 404)),
+    vi.fn(async () => jsonResponse(apiFailure("Replay not found"), 404)),
   );
 
   renderPage();

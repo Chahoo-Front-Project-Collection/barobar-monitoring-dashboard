@@ -35,6 +35,22 @@ function jsonResponse(body: unknown, status = 200) {
   });
 }
 
+function apiSuccess<T>(data: T, message = "OK") {
+  return {
+    success: true,
+    message,
+    data,
+  };
+}
+
+function apiFailure(message: string) {
+  return {
+    success: false,
+    message,
+    data: null,
+  };
+}
+
 beforeEach(() => {
   vi.unstubAllGlobals();
 });
@@ -42,9 +58,11 @@ beforeEach(() => {
 test("renders error groups using filters from the URL query string", async () => {
   const fetcher = vi.fn<typeof fetch>(async () =>
     jsonResponse(
-      createErrorGroupsFixture({
-        pagination: { page: 2, page_size: 20, total: 41 },
-      }),
+      apiSuccess(
+        createErrorGroupsFixture({
+          pagination: { page: 2, page_size: 20, total: 41, total_pages: 3 },
+        }),
+      ),
     ),
   );
   vi.stubGlobal("fetch", fetcher);
@@ -77,7 +95,7 @@ test("submits filters back into the route search params", async () => {
   const user = userEvent.setup();
   vi.stubGlobal(
     "fetch",
-    vi.fn(async () => jsonResponse(createErrorGroupsFixture())),
+    vi.fn(async () => jsonResponse(apiSuccess(createErrorGroupsFixture()))),
   );
 
   const { router } = renderPage("/dashboard/errors");
@@ -99,10 +117,12 @@ test("renders an empty state when no error groups exist", async () => {
     "fetch",
     vi.fn(async () =>
       jsonResponse(
-        createErrorGroupsFixture({
-          items: [],
-          pagination: { page: 1, page_size: 20, total: 0 },
-        }),
+        apiSuccess(
+          createErrorGroupsFixture({
+            items: [],
+            pagination: { page: 1, page_size: 20, total: 0, total_pages: 0 },
+          }),
+        ),
       ),
     ),
   );
@@ -115,7 +135,7 @@ test("renders an empty state when no error groups exist", async () => {
 test("renders a retry action when error groups fail to load", async () => {
   vi.stubGlobal(
     "fetch",
-    vi.fn(async () => jsonResponse({ message: "Database unavailable" }, 500)),
+    vi.fn(async () => jsonResponse(apiFailure("Database unavailable"), 500)),
   );
 
   renderPage();
