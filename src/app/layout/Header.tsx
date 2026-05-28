@@ -10,7 +10,7 @@ export function Header() {
           </span>
 
           <div className="flex flex-col pl-2">
-            <p className="text-lg font-bold leading-none text-primary">바로바 모니터링</p>
+            <p className="text-lg font-extrabold leading-none text-primary">바로바 모니터링</p>
             <p className="mt-1 text-xs text-text-subtle">Replay-based</p>
           </div>
         </div>
