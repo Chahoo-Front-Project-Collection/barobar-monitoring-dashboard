@@ -74,7 +74,7 @@ function ReplaySection({ replayId }: { replayId: string }) {
   const query = useReplayDetail(replayId);
 
   return (
-    <section className="overflow-hidden border border-subtle bg-surface">
+    <section className="overflow-hidden border border-subtle bg-surface rounded-xl">
       <div className="border-b border-subtle px-4 py-3">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex h-full items-center gap-2">
