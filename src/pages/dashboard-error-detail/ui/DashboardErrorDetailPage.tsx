@@ -1,7 +1,6 @@
 import { AlertTriangle, ArrowLeft, Play, RefreshCw } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
-
 import type { ErrorEvent } from "@/entities/error";
 import { useErrorDetail } from "@/entities/error";
 import { useReplayDetail } from "@/entities/replay";
@@ -62,7 +61,7 @@ function DashboardErrorDetailContent({ errorId }: { errorId: string }) {
         <ErrorDetailPanel
           error={query.data}
           onSelectReplayId={setSelectedReplayId}
-          selectedReplayId={selectedReplayId}
+          selectedReplayId={activeReplayId}
           replaySection={activeReplayId ? <ReplaySection replayId={activeReplayId} /> : null}
         />
       )}
@@ -75,7 +74,7 @@ function ReplaySection({ replayId }: { replayId: string }) {
 
   return (
     <section className="overflow-hidden border border-subtle bg-surface rounded-xl">
-      <div className="border-b border-subtle px-4 py-3">
+      <div className="border-b border-subtle px-4 py-3 h-[65px]">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex h-full items-center gap-2">
             <Play className="size-5" />
@@ -89,9 +88,11 @@ function ReplaySection({ replayId }: { replayId: string }) {
       </div>
 
       {query.isPending ? (
-        <div className="p-4 text-sm text-text-muted">Loading latest replay...</div>
+        <div className="p-4 text-sm text-text-muted" style={{ height: "632px" }}>
+          Loading latest replay...
+        </div>
       ) : query.isError ? (
-        <div className="p-4 text-sm text-danger">
+        <div className="p-4 text-sm text-danger" style={{ height: "632px" }}>
           Failed to load latest replay: {query.error.message}
         </div>
       ) : (
