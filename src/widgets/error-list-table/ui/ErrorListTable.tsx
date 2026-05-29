@@ -27,13 +27,13 @@ export function ErrorListTable({ data, onPageChange }: ErrorListTableProps) {
         <table className="min-w-full border-collapse text-left text-sm">
           <thead className="bg-slate-200/50 text-xs font-semibold uppercase text-text-muted">
             <tr>
-              <th className="px-4 py-3">Message</th>
+              <th className="px-4 py-3">에러 메시지</th>
               <th className="px-4 py-3 text-center">Status</th>
               <th className="px-4 py-3">Request URL</th>
-              <th className="px-4 py-3 text-center">Replay Count</th>
-              <th className="px-4 py-3 text-center">Version</th>
-              <th className="px-4 py-3 text-center">Environment</th>
-              <th className="px-4 py-3">Last seen</th>
+              <th className="px-4 py-3 text-center">Replay 수</th>
+              <th className="px-4 py-3 text-center">버전</th>
+              <th className="px-4 py-3 text-center">환경</th>
+              <th className="px-4 py-3">마지막 발생 시간</th>
             </tr>
           </thead>
 

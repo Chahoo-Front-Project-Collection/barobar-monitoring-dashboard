@@ -72,9 +72,9 @@ test("renders error groups using filters from the URL query string", async () =>
   );
 
   expect(await screen.findByRole("heading", { name: "Errors" })).toBeInTheDocument();
-  expect(screen.getByLabelText("Search message")).toHaveValue("timeout");
-  expect(screen.getByLabelText("Environment")).toHaveValue("production");
-  expect(screen.getByLabelText("Version")).toHaveValue("3.2.0");
+  expect(screen.getByLabelText("에러 메시지 검색")).toHaveValue("timeout");
+  expect(screen.getByLabelText("환경")).toHaveValue("production");
+  expect(screen.getByLabelText("버전")).toHaveValue("3.2.0");
   expect(
     await screen.findByRole("cell", { name: "Request failed with status code 500" }),
   ).toBeVisible();
@@ -101,9 +101,9 @@ test("submits filters back into the route search params", async () => {
   const { router } = renderPage("/dashboard/errors");
 
   await screen.findByRole("cell", { name: "Request failed with status code 500" });
-  await user.type(screen.getByLabelText("Search message"), "timeout");
-  await user.selectOptions(screen.getByLabelText("Environment"), "production");
-  await user.click(screen.getByRole("button", { name: "Apply filters" }));
+  await user.type(screen.getByLabelText("에러 메시지 검색"), "timeout");
+  await user.selectOptions(screen.getByLabelText("환경"), "production");
+  await user.click(screen.getByRole("button", { name: "Apply" }));
 
   await waitFor(() => {
     expect(router.state.location.search).toContain("message=timeout");
