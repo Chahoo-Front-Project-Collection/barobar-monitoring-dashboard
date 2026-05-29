@@ -15,11 +15,12 @@ export function ErrorFilters({ filters, onApply }: ErrorFiltersProps) {
       }}
     >
       <label className="grid gap-1 text-sm font-medium text-text-muted">
-        Tenant
+        Search message
         <input
           className="h-10 border border-strong px-3 text-text outline-none focus:border-primary"
-          defaultValue={filters.tenant_id ?? ""}
-          name="tenant_id"
+          defaultValue={filters.message ?? ""}
+          name="message"
+          placeholder="Search message"
         />
       </label>
       <label className="grid gap-1 text-sm font-medium text-text-muted">
@@ -74,7 +75,7 @@ function readFiltersFromForm(form: HTMLFormElement): ErrorGroupFilters {
   const formData = new FormData(form);
 
   return {
-    tenant_id: readString(formData, "tenant_id"),
+    message: readString(formData, "message"),
     environment: readString(formData, "environment"),
     version: readString(formData, "version"),
     date_from: readString(formData, "date_from"),

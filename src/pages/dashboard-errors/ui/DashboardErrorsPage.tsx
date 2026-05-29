@@ -60,7 +60,7 @@ export function DashboardErrorsPage() {
 
 function parseFilters(searchParams: URLSearchParams): ErrorGroupFilters {
   return {
-    tenant_id: searchParams.get("tenant_id") ?? undefined,
+    message: searchParams.get("message") ?? undefined,
     environment: searchParams.get("environment") ?? undefined,
     version: searchParams.get("version") ?? undefined,
     date_from: searchParams.get("date_from") ?? undefined,

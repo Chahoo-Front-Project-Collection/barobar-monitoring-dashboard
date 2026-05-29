@@ -44,7 +44,7 @@ export type ErrorDetail = ErrorGroup & {
 };
 
 export type ErrorGroupFilters = {
-  tenant_id?: string;
+  message?: string;
   environment?: string;
   version?: string;
   date_from?: string;
