@@ -24,7 +24,7 @@ export function ErrorListTable({ data, onPageChange }: ErrorListTableProps) {
         <span className="grid size-12 place-items-center rounded-full bg-surface-muted text-text-subtle">
           <Inbox aria-hidden="true" className="size-6" />
         </span>
-        <p className="text-sm font-medium text-text-muted">No errors match the current filters.</p>
+        <p className="text-sm font-medium text-text-muted">필터에 맞는 항목이 없습니다.</p>
       </div>
     );
   }

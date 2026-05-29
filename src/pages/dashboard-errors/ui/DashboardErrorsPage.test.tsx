@@ -129,7 +129,7 @@ test("renders an empty state when no error groups exist", async () => {
 
   renderPage();
 
-  expect(await screen.findByText("No errors match the current filters.")).toBeVisible();
+  expect(await screen.findByText("필터에 맞는 항목이 없습니다.")).toBeVisible();
 });
 
 test("renders a retry action when error groups fail to load", async () => {
