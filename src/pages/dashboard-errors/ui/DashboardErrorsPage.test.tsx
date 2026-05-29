@@ -79,7 +79,7 @@ test("renders error groups using filters from the URL query string", async () =>
     await screen.findByRole("cell", { name: "Request failed with status code 500" }),
   ).toBeVisible();
   expect(screen.getByRole("cell", { name: "/api/orders" })).toBeVisible();
-  expect(screen.getByText("Page 2 of 3")).toBeVisible();
+  expect(screen.getByText("Page 2 / 3")).toBeVisible();
 
   const requestedUrl = new URL(String(fetcher.mock.calls[0][0]));
   expect(requestedUrl.pathname).toBe("/api/admin/errors");
@@ -103,7 +103,7 @@ test("submits filters back into the route search params", async () => {
   await screen.findByRole("cell", { name: "Request failed with status code 500" });
   await user.type(screen.getByLabelText("에러 메시지 검색"), "timeout");
   await user.selectOptions(screen.getByLabelText("환경"), "production");
-  await user.click(screen.getByRole("button", { name: "Apply" }));
+  await user.click(screen.getByRole("button", { name: "검색" }));
 
   await waitFor(() => {
     expect(router.state.location.search).toContain("message=timeout");

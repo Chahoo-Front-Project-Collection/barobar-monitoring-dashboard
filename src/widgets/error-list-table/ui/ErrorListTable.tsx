@@ -8,7 +8,8 @@ type ErrorListTableProps = {
   onPageChange: (page: number) => void;
 };
 
-const TH_CLASS = "px-5 py-3 text-xs font-semibold uppercase tracking-wide text-text-subtle";
+const TH_CLASS =
+  "px-5 py-3 text-xs font-semibold uppercase tracking-wide text-text-subtle text-nowrap";
 const TD_CLASS = "px-5 py-3.5 align-middle";
 
 export function ErrorListTable({ data, onPageChange }: ErrorListTableProps) {
