@@ -31,8 +31,7 @@ export function ErrorFilters({ filters, onApply }: ErrorFiltersProps) {
         >
           <option value="">All</option>
           <option value="production">Production</option>
-          <option value="staging">Staging</option>
-          <option value="local">Local</option>
+          <option value="development">Development</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm font-medium text-text-muted">

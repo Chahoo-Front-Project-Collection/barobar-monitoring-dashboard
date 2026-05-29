@@ -28,9 +28,11 @@ export function ErrorListTable({ data, onPageChange }: ErrorListTableProps) {
           <thead className="bg-slate-200/50 text-xs font-semibold uppercase text-text-muted">
             <tr>
               <th className="px-4 py-3">Message</th>
-              <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3 text-center">Status</th>
               <th className="px-4 py-3">Request URL</th>
-              <th className="px-4 py-3">Count</th>
+              <th className="px-4 py-3 text-center">Replay Count</th>
+              <th className="px-4 py-3 text-center">Version</th>
+              <th className="px-4 py-3 text-center">Environment</th>
               <th className="px-4 py-3">Last seen</th>
             </tr>
           </thead>
@@ -44,9 +46,13 @@ export function ErrorListTable({ data, onPageChange }: ErrorListTableProps) {
                 }}
               >
                 <td className="max-w-md px-4 py-3 font-medium text-text">{item.message}</td>
-                <td className="px-4 py-3 text-danger">{item.status_code}</td>
+                <td className="px-4 py-3 text-danger text-center">{item.status_code}</td>
                 <td className="px-4 py-3 text-text-muted">{item.request_url}</td>
-                <td className="px-4 py-3 text-text-muted">{item.occurrence_count}</td>
+                <td className="px-4 py-3 text-text-muted text-center">{item.occurrence_count}</td>
+                <td className="px-4 py-3 text-text-muted text-center">{item.version}</td>
+                <td className="px-4 py-3 text-text-muted text-center">
+                  {item.environment.slice(0, 3)}
+                </td>
                 <td className="px-4 py-3 text-text-muted">{formatDateTime(item.last_seen_at)}</td>
               </tr>
             ))}
