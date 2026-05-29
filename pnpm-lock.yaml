@@ -29,7 +29,7 @@ importers:
         specifier: ^7.0.0
         version: 7.15.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       rrweb-player:
-        specifier: ^2.0.0-alpha.18
+        specifier: 2.0.0-alpha.20
         version: 2.0.0-alpha.20
       tailwindcss:
         specifier: ^4.1.0
