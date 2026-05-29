@@ -12,7 +12,7 @@ type ReplayContextPanelProps = {
 export function ReplayContextPanel({ className, replay }: ReplayContextPanelProps) {
   return (
     <aside className={["h-full min-h-0", className || ""].filter(Boolean).join(" ")}>
-      <div className="flex h-full min-h-0 flex-col gap-4 overflow-y-scroll pr-1">
+      <div className="flex h-full min-h-0 flex-col gap-3 overflow-y-scroll pr-1">
         <AccordionSection title="Error summary" defaultOpen>
           <dl className="grid gap-3 text-sm">
             <Metadata label="Message" value={replay.error.message} />
@@ -45,18 +45,28 @@ export function ReplayContextPanel({ className, replay }: ReplayContextPanelProp
             <div className="grid gap-2">
               {replay.http_requests.map((request, index) => (
                 <div
-                  className="border border-subtle p-3 text-sm"
+                  className="rounded-lg border border-subtle bg-surface-muted p-3 text-sm"
                   key={`${request.method}-${request.url}-${index}`}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="font-semibold text-text">{request.method}</span>
+                    <span
+                      className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold uppercase ${httpMethodBadgeClass(request.method)}`}
+                    >
+                      {request.method}
+                    </span>
                     {request.status_code ? (
-                      <span className="font-semibold text-danger">{request.status_code}</span>
+                      <span
+                        className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold tabular-nums ${httpStatusBadgeClass(request.status_code)}`}
+                      >
+                        {request.status_code}
+                      </span>
                     ) : null}
                   </div>
-                  <p className="mt-1 break-all text-text-muted">{request.url}</p>
+                  <p className="mt-2 break-all text-text-muted">{request.url}</p>
                   {request.duration_ms ? (
-                    <p className="mt-1 text-xs text-text-subtle">{request.duration_ms}ms</p>
+                    <p className="mt-1 text-xs tabular-nums text-text-subtle">
+                      {request.duration_ms}ms
+                    </p>
                   ) : null}
                 </div>
               ))}
@@ -81,15 +91,15 @@ function AccordionSection({
   const panelId = useId();
 
   return (
-    <section className="flex min-h-0 shrink-0 flex-col border border-subtle bg-surface">
+    <section className="shrink-0 overflow-hidden rounded-xl border border-subtle bg-surface">
       <button
         aria-controls={panelId}
         aria-expanded={open}
-        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-muted"
         onClick={() => setOpen((value) => !value)}
         type="button"
       >
-        <h2 className="text-base font-semibold text-text">{title}</h2>
+        <h2 className="text-sm font-semibold text-text">{title}</h2>
         <ChevronDown
           aria-hidden="true"
           className={[
@@ -112,8 +122,35 @@ function AccordionSection({
 function Metadata({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase text-text-subtle">{label}</dt>
+      <dt className="text-xs font-semibold uppercase tracking-wide text-text-subtle">{label}</dt>
       <dd className="mt-1 break-all font-medium text-text">{value}</dd>
     </div>
   );
+}
+
+function httpMethodBadgeClass(method: string) {
+  switch (method.toUpperCase()) {
+    case "GET":
+      return "bg-emerald-50 text-emerald-700";
+    case "POST":
+      return "bg-blue-50 text-blue-700";
+    case "PUT":
+      return "bg-amber-50 text-amber-700";
+    case "PATCH":
+      return "bg-violet-50 text-violet-700";
+    case "DELETE":
+      return "bg-red-50 text-red-700";
+    default:
+      return "bg-surface text-text-muted";
+  }
+}
+
+function httpStatusBadgeClass(code: number) {
+  if (code >= 500) {
+    return "bg-danger-soft text-danger-strong";
+  }
+  if (code >= 400) {
+    return "bg-warning-soft text-warning";
+  }
+  return "bg-surface text-text-muted";
 }

@@ -1,3 +1,4 @@
+import { AlertTriangle, OctagonAlert } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import rrwebPlayer from "rrweb-player";
 import "rrweb-player/dist/style.css";
@@ -28,11 +29,13 @@ export const REPLAY_PLAYER_HEIGHT = 520;
 const REPLAY_STATUS_TONE_CLASS = {
   amber: {
     description: "text-warning",
+    icon: AlertTriangle,
     section: "border-warning bg-warning-soft",
     title: "text-warning",
   },
   red: {
     description: "text-danger",
+    icon: OctagonAlert,
     section: "border-danger bg-danger-soft",
     title: "text-danger-strong",
   },
@@ -86,21 +89,30 @@ export function ReplayPlayerPanel({ events }: ReplayPlayerPanelProps) {
     return <ReplayStatusMessage {...statusMessage} />;
   }
 
-  return <div ref={containerRef} className="h-full min-h-0" />;
+  return (
+    <div
+      ref={containerRef}
+      className="grid h-full min-h-0 place-items-center overflow-hidden bg-surface-muted"
+    />
+  );
 }
 
 function ReplayStatusMessage({ description, title, tone }: ReplayStatusMessage) {
   const toneClass = REPLAY_STATUS_TONE_CLASS[tone];
+  const Icon = toneClass.icon;
 
   return (
     <section
-      className={`grid h-full min-h-0 place-items-center border p-8 text-center ${toneClass.section}`}
+      className={`grid h-full min-h-0 place-items-center rounded-xl border p-8 text-center ${toneClass.section}`}
     >
-      <div>
-        <p className={`text-sm font-semibold ${toneClass.title}`}>{title}</p>
-        {description ? (
-          <p className={`mt-2 text-xs font-medium ${toneClass.description}`}>{description}</p>
-        ) : null}
+      <div className="grid justify-items-center gap-3">
+        <Icon aria-hidden="true" className={`size-8 ${toneClass.title}`} />
+        <div>
+          <p className={`text-sm font-semibold ${toneClass.title}`}>{title}</p>
+          {description ? (
+            <p className={`mt-2 text-xs font-medium ${toneClass.description}`}>{description}</p>
+          ) : null}
+        </div>
       </div>
     </section>
   );

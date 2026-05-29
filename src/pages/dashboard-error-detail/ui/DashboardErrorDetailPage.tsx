@@ -32,7 +32,7 @@ function DashboardErrorDetailContent({ errorId }: { errorId: string }) {
           to="/dashboard/errors"
         >
           <ArrowLeft aria-hidden="true" className="size-4" />
-          Back to errors
+          Back
         </Link>
       </div>
 
