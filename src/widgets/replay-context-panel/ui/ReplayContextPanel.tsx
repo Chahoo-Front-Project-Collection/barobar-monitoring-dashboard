@@ -1,9 +1,8 @@
 import { ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 import type { ReactNode } from "react";
-
 import type { ReplayDetail } from "@/entities/replay";
-import { CompanyBadge } from "@/shared/ui";
+import { BrowserLabel, CompanyBadge } from "@/shared/ui";
 
 type ReplayContextPanelProps = {
   className?: string;
@@ -35,10 +34,17 @@ export function ReplayContextPanel({ className, replay }: ReplayContextPanelProp
                 <CompanyBadge companyName={replay.context.company.company_name} />
               </dd>
             </div>
-            <Metadata
-              label="Browser"
-              value={`${replay.context.client.browser.name} ${replay.context.client.browser.version}`}
-            />
+            <div>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-text-subtle">
+                Browser
+              </dt>
+              <dd className="mt-1.5 font-medium text-text">
+                <BrowserLabel
+                  name={replay.context.client.browser.name}
+                  version={replay.context.client.browser.version}
+                />
+              </dd>
+            </div>
             <Metadata
               label="OS"
               value={`${replay.context.client.os.name} ${replay.context.client.os.version}`}

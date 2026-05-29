@@ -1,7 +1,7 @@
 import { ChartNoAxesGantt } from "lucide-react";
 import type { ReactNode } from "react";
 import type { ErrorDetail } from "@/entities/error";
-import { CompanyBadge } from "@/shared/ui";
+import { BrowserLabel, CompanyBadge } from "@/shared/ui";
 
 type ErrorDetailPanelProps = {
   error: ErrorDetail;
@@ -130,7 +130,7 @@ export function ErrorDetailPanel({
                       <CompanyBadge companyName={event.company_name} />
                     </td>
                     <td className={`${TD_CLASS} text-text-muted`}>
-                      {event.browser_name} {event.browser_version}
+                      <BrowserLabel name={event.browser_name} version={event.browser_version} />
                     </td>
                     <td className={`${TD_CLASS} text-text-muted`}>
                       {event.os_name} {event.os_version}
