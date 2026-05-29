@@ -14,8 +14,6 @@ const FIELD_CLASS =
 const FIELD_LABEL_CLASS = "text-xs font-semibold uppercase tracking-wide text-text-subtle";
 
 export function ErrorFilters({ filters, onApply }: ErrorFiltersProps) {
-  // Re-mount on external filter changes (apply / reset / back button) so the
-  // uncontrolled inputs stay in sync with the active filters.
   const formKey = JSON.stringify(filters);
 
   return (
@@ -111,15 +109,13 @@ export function ErrorFilters({ filters, onApply }: ErrorFiltersProps) {
           className="h-11 rounded-lg bg-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-primary-hover"
           type="submit"
         >
-          Apply
+          검색
         </button>
       </div>
     </form>
   );
 }
 
-// Native date inputs only open the calendar from the indicator icon; this lets
-// a click anywhere on the field (including the placeholder text) open it.
 function openDatePicker(event: MouseEvent<HTMLInputElement>) {
   try {
     event.currentTarget.showPicker();

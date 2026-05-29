@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight, Inbox } from "lucide-react";
 import { useNavigate } from "react-router";
 
 import type { ErrorGroupsResponse } from "@/entities/error";
@@ -7,6 +8,9 @@ type ErrorListTableProps = {
   onPageChange: (page: number) => void;
 };
 
+const TH_CLASS = "px-5 py-3 text-xs font-semibold uppercase tracking-wide text-text-subtle";
+const TD_CLASS = "px-5 py-3.5 align-middle";
+
 export function ErrorListTable({ data, onPageChange }: ErrorListTableProps) {
   const navigate = useNavigate();
 
@@ -15,75 +19,122 @@ export function ErrorListTable({ data, onPageChange }: ErrorListTableProps) {
 
   if (items.length === 0) {
     return (
-      <div className="border border-subtle bg-surface p-8 text-center text-sm text-text-muted">
-        No errors match the current filters.
+      <div className="grid place-items-center gap-3 rounded-xl border border-subtle bg-surface px-6 py-16 text-center">
+        <span className="grid size-12 place-items-center rounded-full bg-surface-muted text-text-subtle">
+          <Inbox aria-hidden="true" className="size-6" />
+        </span>
+        <p className="text-sm font-medium text-text-muted">No errors match the current filters.</p>
       </div>
     );
   }
 
   return (
-    <section className="overflow-hidden border border-subtle bg-surface">
+    <section className="overflow-hidden rounded-xl border border-subtle bg-surface">
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse text-left text-sm">
-          <thead className="bg-slate-200/50 text-xs font-semibold uppercase text-text-muted">
+          <thead className="border-b border-subtle bg-surface-muted">
             <tr>
-              <th className="px-4 py-3">에러 메시지</th>
-              <th className="px-4 py-3 text-center">Status</th>
-              <th className="px-4 py-3">Request URL</th>
-              <th className="px-4 py-3 text-center">Replay 수</th>
-              <th className="px-4 py-3 text-center">버전</th>
-              <th className="px-4 py-3 text-center">환경</th>
-              <th className="px-4 py-3">마지막 발생 시간</th>
+              <th className={TH_CLASS}>에러 메시지</th>
+              <th className={`${TH_CLASS} text-center`}>Status</th>
+              <th className={TH_CLASS}>Request URL</th>
+              <th className={`${TH_CLASS} text-center`}>Replay 수</th>
+              <th className={`${TH_CLASS} text-center`}>버전</th>
+              <th className={`${TH_CLASS} text-center`}>환경</th>
+              <th className={TH_CLASS}>마지막 발생 시간</th>
             </tr>
           </thead>
 
           <tbody>
             {items.map((item) => (
               <tr
-                className="border-t border-subtle cursor-pointer hover:bg-slate-50"
+                key={item.id}
+                className="cursor-pointer border-t border-subtle transition-colors first:border-t-0 hover:bg-surface-muted"
                 onClick={() => {
                   navigate(`/dashboard/errors/${item.id}`);
                 }}
               >
-                <td className="max-w-md px-4 py-3 font-medium text-text">{item.message}</td>
-                <td className="px-4 py-3 text-danger text-center">{item.status_code}</td>
-                <td className="px-4 py-3 text-text-muted">{item.request_url}</td>
-                <td className="px-4 py-3 text-text-muted text-center">{item.occurrence_count}</td>
-                <td className="px-4 py-3 text-text-muted text-center">{item.version}</td>
-                <td className="px-4 py-3 text-text-muted text-center">
-                  {item.environment.slice(0, 3)}
+                <td className={`${TD_CLASS} font-medium text-text`}>
+                  <span className="block max-w-88 truncate" title={item.message}>
+                    {item.message}
+                  </span>
                 </td>
-                <td className="px-4 py-3 text-text-muted">{formatDateTime(item.last_seen_at)}</td>
+                <td className={`${TD_CLASS} text-center`}>
+                  <span
+                    className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold tabular-nums ${statusBadgeClass(item.status_code)}`}
+                  >
+                    {item.status_code}
+                  </span>
+                </td>
+                <td className={`${TD_CLASS} text-text-muted`}>
+                  <span className="block max-w-[18rem] truncate" title={item.request_url}>
+                    {item.request_url}
+                  </span>
+                </td>
+                <td className={`${TD_CLASS} text-center tabular-nums text-text-muted`}>
+                  {item.occurrence_count}
+                </td>
+                <td className={`${TD_CLASS} text-center tabular-nums text-text-muted`}>
+                  {item.version}
+                </td>
+                <td className={`${TD_CLASS} text-center`}>
+                  <span
+                    className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${envBadgeClass(item.environment)}`}
+                  >
+                    {item.environment}
+                  </span>
+                </td>
+                <td className={`${TD_CLASS} whitespace-nowrap text-text-subtle`}>
+                  {formatDateTime(item.last_seen_at)}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-subtle px-4 py-3 text-sm">
+
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-subtle px-5 py-3.5 text-sm">
         <p className="font-medium text-text-muted">
-          Page {pagination.page} of {pageCount}
+          Page {pagination.page} / {pageCount}
         </p>
         <div className="flex gap-2">
           <button
-            className="border border-strong px-3 py-2 font-medium text-text-muted disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex items-center gap-1 rounded-lg border border-subtle px-3 py-2 font-medium text-text-muted transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
             disabled={pagination.page <= 1}
             onClick={() => onPageChange(pagination.page - 1)}
             type="button"
           >
-            Previous
+            <ChevronLeft aria-hidden="true" className="size-4" />
+            이전
           </button>
           <button
-            className="border border-strong px-3 py-2 font-medium text-text-muted disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex items-center gap-1 rounded-lg border border-subtle px-3 py-2 font-medium text-text-muted transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
             disabled={pagination.page >= pageCount}
             onClick={() => onPageChange(pagination.page + 1)}
             type="button"
           >
-            Next
+            다음
+            <ChevronRight aria-hidden="true" className="size-4" />
           </button>
         </div>
       </div>
     </section>
   );
+}
+
+function statusBadgeClass(code: number) {
+  if (code >= 500) {
+    return "bg-danger-soft text-danger-strong";
+  }
+  if (code >= 400) {
+    return "bg-warning-soft text-warning";
+  }
+  return "bg-surface-muted text-text-muted";
+}
+
+function envBadgeClass(environment: string) {
+  return environment === "production"
+    ? "bg-primary-soft text-primary"
+    : "bg-surface-muted text-text-muted";
 }
 
 function formatDateTime(value: string) {
