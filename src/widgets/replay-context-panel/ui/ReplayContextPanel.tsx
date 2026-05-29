@@ -3,6 +3,7 @@ import { useId, useState } from "react";
 import type { ReactNode } from "react";
 
 import type { ReplayDetail } from "@/entities/replay";
+import { CompanyBadge } from "@/shared/ui";
 
 type ReplayContextPanelProps = {
   className?: string;
@@ -10,6 +11,7 @@ type ReplayContextPanelProps = {
 };
 
 export function ReplayContextPanel({ className, replay }: ReplayContextPanelProps) {
+  console.log("replay.context", replay.context);
   return (
     <aside className={["h-full min-h-0", className || ""].filter(Boolean).join(" ")}>
       <div className="flex h-full min-h-0 flex-col gap-3 overflow-y-scroll pr-1">
@@ -25,7 +27,14 @@ export function ReplayContextPanel({ className, replay }: ReplayContextPanelProp
         <AccordionSection title="Context" defaultOpen>
           <dl className="grid gap-3 text-sm">
             <Metadata label="User" value={replay.context.user.user_name} />
-            <Metadata label="Company" value={replay.context.company.company_name} />
+            <div>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-text-subtle">
+                Company
+              </dt>
+              <dd className="mt-1.5">
+                <CompanyBadge companyName={replay.context.company.company_name} />
+              </dd>
+            </div>
             <Metadata
               label="Browser"
               value={`${replay.context.client.browser.name} ${replay.context.client.browser.version}`}

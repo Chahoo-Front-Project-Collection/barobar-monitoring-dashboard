@@ -85,6 +85,49 @@ test("fetchReplayDetail normalizes camelCase Admin replay payload", async () => 
   });
 });
 
+test("prefers the error event over the payload snapshot for context fields", async () => {
+  const fetcher = vi.fn(async () =>
+    Response.json(
+      apiSuccess({
+        id: "replay_abc123",
+        errorEvent: {
+          id: "event_abc123",
+          userName: "수정된사용자",
+          companyName: "barobar_gs",
+          browserName: "Edge",
+          osName: "Windows",
+          deviceType: "Mobile",
+        },
+        payload: {
+          events: [{ type: 0 }],
+          user: { user_name: "원본사용자" },
+          company: { company_name: "barobar_dev_ssl" },
+          client: {
+            browser: { name: "Chrome" },
+            os: { name: "macOS" },
+            device: { type: "Desktop" },
+          },
+        },
+      }),
+    ),
+  );
+
+  const result = await fetchReplayDetail("replay_abc123", {
+    baseUrl: "http://api.test",
+    fetcher,
+  });
+
+  expect(result.context).toMatchObject({
+    user: { user_name: "수정된사용자" },
+    company: { company_name: "barobar_gs" },
+    client: {
+      browser: { name: "Edge" },
+      os: { name: "Windows" },
+      device: { type: "Mobile" },
+    },
+  });
+});
+
 function apiSuccess<T>(data: T) {
   return {
     success: true,

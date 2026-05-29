@@ -1,0 +1,1 @@
+export { CompanyBadge } from "./CompanyBadge";

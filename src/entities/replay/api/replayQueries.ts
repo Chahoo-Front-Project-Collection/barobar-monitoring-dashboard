@@ -64,57 +64,60 @@ function normalizeReplayDetail(response: unknown): ReplayDetail {
         readString(error, ["request_url", "requestUrl"]) ||
         readString(errorEvent, ["request_url", "requestUrl"]),
     },
+    // errorEvent (the linked DB row, which the admin edits and the occurrence
+    // table shows) takes precedence over the recorded payload snapshot, which
+    // can be stale relative to the error event.
     context: {
       user: {
         user_id:
           readString(contextUser, ["user_id", "userId"]) ||
-          readString(payloadUser, ["user_id", "userId"]) ||
-          readString(errorEvent, ["user_id", "userId"]),
+          readString(errorEvent, ["user_id", "userId"]) ||
+          readString(payloadUser, ["user_id", "userId"]),
         user_name:
           readString(contextUser, ["user_name", "userName"]) ||
-          readString(payloadUser, ["user_name", "userName"]) ||
-          readString(errorEvent, ["user_name", "userName"]),
+          readString(errorEvent, ["user_name", "userName"]) ||
+          readString(payloadUser, ["user_name", "userName"]),
       },
       company: {
         company_id:
           readString(contextCompany, ["company_id", "companyId"]) ||
-          readString(payloadCompany, ["company_id", "companyId"]) ||
-          readString(errorEvent, ["company_id", "companyId"]),
+          readString(errorEvent, ["company_id", "companyId"]) ||
+          readString(payloadCompany, ["company_id", "companyId"]),
         company_name:
           readString(contextCompany, ["company_name", "companyName"]) ||
-          readString(payloadCompany, ["company_name", "companyName"]) ||
-          readString(errorEvent, ["company_name", "companyName"]),
+          readString(errorEvent, ["company_name", "companyName"]) ||
+          readString(payloadCompany, ["company_name", "companyName"]),
       },
       client: {
         browser: {
           name:
             readString(contextBrowser, ["name"]) ||
-            readString(payloadBrowser, ["name"]) ||
-            readString(errorEvent, ["browser_name", "browserName"]),
+            readString(errorEvent, ["browser_name", "browserName"]) ||
+            readString(payloadBrowser, ["name"]),
           version:
             readString(contextBrowser, ["version"]) ||
-            readString(payloadBrowser, ["version"]) ||
-            readString(errorEvent, ["browser_version", "browserVersion"]),
+            readString(errorEvent, ["browser_version", "browserVersion"]) ||
+            readString(payloadBrowser, ["version"]),
           user_agent:
             readString(contextBrowser, ["user_agent", "userAgent"]) ||
-            readString(payloadBrowser, ["user_agent", "userAgent"]) ||
-            readString(errorEvent, ["user_agent", "userAgent"]),
+            readString(errorEvent, ["user_agent", "userAgent"]) ||
+            readString(payloadBrowser, ["user_agent", "userAgent"]),
         },
         os: {
           name:
             readString(contextOs, ["name"]) ||
-            readString(payloadOs, ["name"]) ||
-            readString(errorEvent, ["os_name", "osName"]),
+            readString(errorEvent, ["os_name", "osName"]) ||
+            readString(payloadOs, ["name"]),
           version:
             readString(contextOs, ["version"]) ||
-            readString(payloadOs, ["version"]) ||
-            readString(errorEvent, ["os_version", "osVersion"]),
+            readString(errorEvent, ["os_version", "osVersion"]) ||
+            readString(payloadOs, ["version"]),
         },
         device: {
           type:
             readString(contextDevice, ["type"]) ||
-            readString(payloadDevice, ["type"]) ||
-            readString(errorEvent, ["device_type", "deviceType"]),
+            readString(errorEvent, ["device_type", "deviceType"]) ||
+            readString(payloadDevice, ["type"]),
         },
       },
     },

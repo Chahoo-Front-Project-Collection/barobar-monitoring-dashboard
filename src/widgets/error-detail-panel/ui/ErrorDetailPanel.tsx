@@ -1,7 +1,7 @@
 import { ChartNoAxesGantt } from "lucide-react";
 import type { ReactNode } from "react";
-
 import type { ErrorDetail } from "@/entities/error";
+import { CompanyBadge } from "@/shared/ui";
 
 type ErrorDetailPanelProps = {
   error: ErrorDetail;
@@ -28,12 +28,6 @@ export function ErrorDetailPanel({
     { label: "Device", key: "device_type" },
     { label: "Replay ID", key: "replay_id" },
   ];
-
-  const convertToCompanyName = (companyName: string) => {
-    const normalized = companyName.replace(/^barobar_/, "");
-
-    return normalized.toUpperCase();
-  };
 
   return (
     <div className="grid gap-5">
@@ -133,10 +127,7 @@ export function ErrorDetailPanel({
                     </td>
                     <td className={`${TD_CLASS} font-medium text-text`}>{event.user_name}</td>
                     <td className={TD_CLASS}>
-                      <Badge
-                        label={convertToCompanyName(event.company_name)}
-                        className={companyBadgeClass(convertToCompanyName(event.company_name))}
-                      />
+                      <CompanyBadge companyName={event.company_name} />
                     </td>
                     <td className={`${TD_CLASS} text-text-muted`}>
                       {event.browser_name} {event.browser_version}
@@ -156,16 +147,6 @@ export function ErrorDetailPanel({
         </div>
       </section>
     </div>
-  );
-}
-
-function Badge({ label, className }: { label: string; className: string }) {
-  return (
-    <span
-      className={`inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-semibold uppercase ${className}`}
-    >
-      {label}
-    </span>
   );
 }
 
@@ -192,14 +173,6 @@ function envBadgeClass(environment: string) {
   return environment === "production"
     ? "bg-primary-soft text-primary"
     : "bg-surface-muted text-text-muted";
-}
-
-function companyBadgeClass(companyName: string) {
-  const colors: Record<string, string> = {
-    DEV_SSL: "bg-blue-50 text-blue-700",
-  };
-
-  return colors[companyName] || "bg-surface-muted text-text-muted";
 }
 
 function formatDateTime(value: string) {
