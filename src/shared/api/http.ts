@@ -1,4 +1,4 @@
-import { MONITORING_API_BASE_URL } from "@/shared/config";
+import { API_URL } from "@/shared/config";
 
 export type QueryParams = Record<string, string | number | boolean | null | undefined>;
 
@@ -28,11 +28,7 @@ type ApiEnvelope<T> = {
   data: T | null;
 };
 
-export function buildAdminApiUrl(
-  path: string,
-  params: QueryParams = {},
-  baseUrl = MONITORING_API_BASE_URL,
-) {
+export function buildAdminApiUrl(path: string, params: QueryParams = {}, baseUrl = API_URL) {
   const url = new URL(path, baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`);
 
   for (const [key, value] of Object.entries(params)) {

@@ -460,13 +460,13 @@ MVP 로컬 단계:
 ## 11. 환경변수
 
 ```text
-VITE_MONITORING_API_BASE_URL=http://localhost:4000
+VITE_API_URL=http://localhost:4000
 ```
 
 예:
 
 ```ts
-const API_BASE_URL = import.meta.env.VITE_MONITORING_API_BASE_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 ```
 
 ## 12. 구현 순서
