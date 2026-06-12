@@ -32,7 +32,33 @@ test("requestJson unwraps data from a successful API envelope", async () => {
 
   expect(result).toEqual({ ok: true });
   expect(fetcher).toHaveBeenCalledWith("http://api.test/api/admin/errors?page=1", {
+    credentials: "include",
     headers: { Accept: "application/json" },
+    method: "GET",
+  });
+});
+
+test("requestJson sends JSON bodies with credentials", async () => {
+  const fetcher = vi.fn(async () =>
+    Response.json({
+      success: true,
+      message: "Logged in",
+      data: { username: "admin" },
+    }),
+  );
+
+  await requestJson("/api/admin/login", {
+    baseUrl: "http://api.test",
+    body: { username: "admin", password: "secret" },
+    fetcher,
+    method: "POST",
+  });
+
+  expect(fetcher).toHaveBeenCalledWith("http://api.test/api/admin/login", {
+    body: JSON.stringify({ username: "admin", password: "secret" }),
+    credentials: "include",
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
+    method: "POST",
   });
 });
 

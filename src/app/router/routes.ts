@@ -1,4 +1,8 @@
 const routes = {
+  LOGIN: {
+    label: "Login",
+    path: "/login",
+  },
   ERRORS: {
     label: "Errors",
     path: "/dashboard/errors",

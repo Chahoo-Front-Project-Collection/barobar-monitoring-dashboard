@@ -12,7 +12,9 @@ test("fetchReplayDetail calls the Admin replay detail endpoint", async () => {
 
   expect(result).toEqual(response);
   expect(fetcher).toHaveBeenCalledWith("http://api.test/api/admin/replays/replay_abc123", {
+    credentials: "include",
     headers: { Accept: "application/json" },
+    method: "GET",
   });
 });
 

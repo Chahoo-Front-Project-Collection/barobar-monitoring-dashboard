@@ -6,7 +6,9 @@ export type Fetcher = typeof fetch;
 
 export type RequestJsonOptions = {
   baseUrl?: string;
+  body?: unknown;
   fetcher?: Fetcher;
+  method?: "GET" | "POST";
   params?: QueryParams;
 };
 
@@ -44,22 +46,32 @@ export function buildAdminApiUrl(path: string, params: QueryParams = {}, baseUrl
 
 export async function requestJson<T>(
   path: string,
-  { baseUrl, fetcher = fetch, params }: RequestJsonOptions = {},
+  { baseUrl, body: requestBody, fetcher = fetch, method = "GET", params }: RequestJsonOptions = {},
 ): Promise<T> {
-  const response = await fetcher(buildAdminApiUrl(path, params, baseUrl), {
-    headers: { Accept: "application/json" },
-  });
-  const body = await readJsonBody(response);
+  const headers: HeadersInit = { Accept: "application/json" };
+  const requestInit: RequestInit = {
+    credentials: "include",
+    headers,
+    method,
+  };
 
-  if (!isApiEnvelope<T>(body)) {
+  if (requestBody !== undefined) {
+    headers["Content-Type"] = "application/json";
+    requestInit.body = JSON.stringify(requestBody);
+  }
+
+  const response = await fetcher(buildAdminApiUrl(path, params, baseUrl), requestInit);
+  const responseBody = await readJsonBody(response);
+
+  if (!isApiEnvelope<T>(responseBody)) {
     throw new ApiError("Unexpected API response format", response.status, response.statusText);
   }
 
-  if (!response.ok || !body.success) {
-    throw new ApiError(body.message, response.status, response.statusText);
+  if (!response.ok || !responseBody.success) {
+    throw new ApiError(responseBody.message, response.status, response.statusText);
   }
 
-  return body.data as T;
+  return responseBody.data as T;
 }
 
 async function readJsonBody(response: Response): Promise<unknown> {

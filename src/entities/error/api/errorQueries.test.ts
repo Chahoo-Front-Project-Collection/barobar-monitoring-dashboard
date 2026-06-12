@@ -13,7 +13,11 @@ test("fetchErrorGroups calls the Admin errors endpoint with filters", async () =
   expect(result).toEqual(response);
   expect(fetcher).toHaveBeenCalledWith(
     "http://api.test/api/admin/errors?message=timeout&environment=production&page=2",
-    { headers: { Accept: "application/json" } },
+    {
+      credentials: "include",
+      headers: { Accept: "application/json" },
+      method: "GET",
+    },
   );
 });
 
@@ -74,7 +78,9 @@ test("fetchErrorDetail calls the Admin error detail endpoint", async () => {
 
   expect(result).toEqual(response);
   expect(fetcher).toHaveBeenCalledWith("http://api.test/api/admin/errors/error_abc123", {
+    credentials: "include",
     headers: { Accept: "application/json" },
+    method: "GET",
   });
 });
 
