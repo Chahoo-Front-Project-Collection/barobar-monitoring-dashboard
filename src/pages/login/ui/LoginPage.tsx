@@ -1,7 +1,7 @@
 import { AlertCircle } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router";
-import logoIcon from "@/assets/icons/logo.png";
+import logoIcon from "@/assets/icons/logo.webp";
 import { useAdminLogin, useAdminMe } from "@/features/admin-auth";
 
 const DASHBOARD_PATH = "/dashboard/errors";

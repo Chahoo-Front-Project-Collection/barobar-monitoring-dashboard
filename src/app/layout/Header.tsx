@@ -1,7 +1,7 @@
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router";
 
-import logoIcon from "@/assets/icons/logo.png";
+import logoIcon from "@/assets/icons/logo.webp";
 import { useAdminLogout } from "@/features/admin-auth";
 import routes from "@/app/router/routes";
 
