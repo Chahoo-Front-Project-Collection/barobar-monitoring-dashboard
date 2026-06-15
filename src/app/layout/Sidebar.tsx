@@ -13,7 +13,7 @@ const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
 
 export function Sidebar() {
   return (
-    <aside className="fixed left-0 top-16 z-30 flex h-[calc(100vh-4rem)] w-16 shrink-0 flex-col overflow-y-auto border-r border-subtle bg-surface px-2 py-4 lg:w-30 lg:px-4">
+    <aside className="fixed left-0 top-16 z-30 hidden h-[calc(100vh-4rem)] w-16 shrink-0 flex-col overflow-y-auto border-r border-subtle bg-surface px-2 py-4 lg:w-30 lg:px-4 md:flex">
       <p className="hidden text-center pb-2 text-xs font-semibold uppercase tracking-wide text-text-subtle lg:block">
         Monitoring
       </p>

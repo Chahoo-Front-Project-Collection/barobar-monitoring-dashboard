@@ -8,7 +8,7 @@ export function App() {
       <Header />
       <Sidebar />
 
-      <main className="min-h-screen min-w-0 pb-8 pl-20 pr-4 pt-20 text-text sm:pr-6 lg:pl-38 lg:pr-8">
+      <main className="min-h-screen min-w-0 pb-8 pl-6 md:pl-20 pr-4 pt-20 text-text sm:pr-6 lg:pl-38 lg:pr-8">
         <Outlet />
       </main>
     </div>

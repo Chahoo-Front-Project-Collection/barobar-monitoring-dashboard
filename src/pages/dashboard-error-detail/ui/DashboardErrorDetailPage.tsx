@@ -96,10 +96,7 @@ function ReplaySection({ replayId }: { replayId: string }) {
           Failed to load latest replay: {query.error.message}
         </div>
       ) : (
-        <div
-          className="grid gap-5 py-4 pl-4 pr-2 lg:grid-cols-[minmax(0,1fr)_34rem] lg:items-stretch"
-          style={{ height: "632px" }}
-        >
+        <div className="grid min-h-[calc(600px+34rem)] grid-rows-[600px_34rem] items-stretch gap-5 py-4 pl-4 pr-2 lg:h-[632px] lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_34rem] lg:grid-rows-none">
           <div className="min-w-0">
             <ReplayPlayerPanel events={query.data.events} />
           </div>
