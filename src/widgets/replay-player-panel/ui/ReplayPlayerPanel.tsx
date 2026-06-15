@@ -9,6 +9,10 @@ type ReplayPlayerPanelProps = {
 
 type PlayerInstance = {
   $destroy?: () => void;
+  addEventListener?: (event: string, handler: () => void) => void;
+  getReplayer?: () => {
+    pause: () => void;
+  };
 };
 
 type ReplayEventState =
@@ -67,8 +71,16 @@ export function ReplayPlayerPanel({ events }: ReplayPlayerPanelProps) {
           autoPlay: false,
           showController: true,
           speedOption: [1, 2, 4],
+
+          skipInactive: false,
+          useVirtualDom: false,
+          loadTimeout: 3000,
         },
       }) as unknown as PlayerInstance;
+
+      player.addEventListener?.("finish", () => {
+        player?.getReplayer?.().pause();
+      });
     } catch {
       if (!disposed) {
         queueMicrotask(() => {
@@ -92,7 +104,7 @@ export function ReplayPlayerPanel({ events }: ReplayPlayerPanelProps) {
   return (
     <div
       ref={containerRef}
-      className="grid h-full min-h-0 place-items-center overflow-hidden bg-surface-muted"
+      className="grid h-full min-h-0 place-items-center overflow-hidden bg-surface-muted [&_.rr-controller\\_\\_btns>.switch]:hidden!"
     />
   );
 }

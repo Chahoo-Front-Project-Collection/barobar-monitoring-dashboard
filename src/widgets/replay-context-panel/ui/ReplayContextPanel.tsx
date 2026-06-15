@@ -10,7 +10,6 @@ type ReplayContextPanelProps = {
 };
 
 export function ReplayContextPanel({ className, replay }: ReplayContextPanelProps) {
-  console.log("replay.context", replay.context);
   return (
     <aside className={["h-full min-h-0", className || ""].filter(Boolean).join(" ")}>
       <div className="flex h-full min-h-0 flex-col gap-3 overflow-y-scroll pr-1">

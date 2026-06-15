@@ -53,19 +53,26 @@ test("renders an incomplete replay payload state when events do not include a fu
   expect(mockRrwebPlayer).not.toHaveBeenCalled();
 });
 
-test("does not attach a custom finish handler so rrweb-player can restart from the beginning", () => {
+test("pauses the replayer on finish so recorded CSS animations stop", () => {
   const addEventListener = vi.fn();
+  const pause = vi.fn();
 
   mockRrwebPlayer.mockImplementation(function MockPlayer() {
     return {
       $destroy: vi.fn(),
       addEventListener,
+      getReplayer: () => ({ pause }),
     };
   });
 
   render(<ReplayPlayerPanel events={createPlayableReplayEvents()} />);
 
-  expect(addEventListener).not.toHaveBeenCalled();
+  expect(addEventListener).toHaveBeenCalledWith("finish", expect.any(Function));
+
+  const finishHandler = addEventListener.mock.calls.find(([event]) => event === "finish")?.[1];
+  finishHandler();
+
+  expect(pause).toHaveBeenCalled();
 });
 
 test("passes the full events array to rrweb-player without trimming events before full snapshot", () => {
