@@ -71,6 +71,9 @@ test("renders error metadata and occurrence events", async () => {
                 user_name: "홍길동",
                 company_id: "c_001",
                 company_name: "고객사A",
+                page_url: "https://service.example.com/old-orders",
+                version: "3.1.0",
+                environment: "development",
                 browser_name: "Chrome",
                 browser_version: "124.0.0.0",
                 os_name: "macOS",
@@ -86,6 +89,9 @@ test("renders error metadata and occurrence events", async () => {
                 user_name: "홍길동",
                 company_id: "c_001",
                 company_name: "고객사A",
+                page_url: "https://service.example.com/orders",
+                version: "3.2.0",
+                environment: "production",
                 browser_name: "Chrome",
                 browser_version: "125.0.0.0",
                 os_name: "macOS",
@@ -118,7 +124,7 @@ test("renders error metadata and occurrence events", async () => {
     await screen.findByRole("heading", { name: "Request failed with status code 500" }),
   ).toBeVisible();
   expect(screen.getByText("https://service.example.com/orders")).toBeVisible();
-  expect(screen.getByText("/api/orders")).toBeVisible();
+  expect(screen.getAllByText("/api/orders").length).toBeGreaterThan(0);
   expect(screen.getByText("3.2.0")).toBeVisible();
   expect(screen.getByText("production")).toBeVisible();
   expect(screen.getAllByText("홍길동").length).toBeGreaterThan(0);
@@ -133,6 +139,13 @@ test("renders error metadata and occurrence events", async () => {
 
   expect(await screen.findByText("Session replay")).toBeVisible();
   expect(screen.getAllByText("replay_old").length).toBeGreaterThan(0);
+  expect(
+    screen.getByRole("heading", { name: "Request failed with status code 500" }),
+  ).toBeVisible();
+  expect(screen.getByText("https://service.example.com/old-orders")).toBeVisible();
+  expect(screen.getAllByText("/api/orders").length).toBeGreaterThan(0);
+  expect(screen.getByText("3.1.0")).toBeVisible();
+  expect(screen.getByText("development")).toBeVisible();
 
   expect(fetcher).toHaveBeenCalledWith("http://localhost:4000/api/admin/errors/error_abc123", {
     credentials: "include",

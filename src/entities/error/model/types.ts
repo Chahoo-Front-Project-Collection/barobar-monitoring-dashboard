@@ -19,6 +19,9 @@ export type ErrorEvent = {
   user_name: string;
   company_id: string;
   company_name: string;
+  page_url: string;
+  version: string;
+  environment: string;
   browser_name: string;
   browser_version: string;
   os_name: string;

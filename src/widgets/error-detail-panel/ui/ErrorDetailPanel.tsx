@@ -19,6 +19,12 @@ export function ErrorDetailPanel({
   selectedReplayId,
   onSelectReplayId,
 }: ErrorDetailPanelProps) {
+  const selectedEvent = error.events.find((event) => event.replay_id === selectedReplayId);
+  const display = {
+    page_url: selectedEvent?.page_url || error.page_url,
+    version: selectedEvent?.version || error.version,
+    environment: selectedEvent?.environment || error.environment,
+  };
   const tableHeadings = [
     { label: "Occurred", key: "occurred_at" },
     { label: "User", key: "user_name" },
@@ -42,16 +48,16 @@ export function ErrorDetailPanel({
             <h1 className="mt-3 break-all text-2xl font-bold text-text">{error.message}</h1>
           </div>
           <div className="flex shrink-0 items-start gap-6">
-            <Metadata label="Version" value={error.version} />
+            <Metadata label="Version" value={display.version} />
             <div>
               <dt className="text-xs font-semibold uppercase tracking-wide text-text-subtle">
                 Environment
               </dt>
               <dd className="mt-1.5">
                 <span
-                  className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${envBadgeClass(error.environment)}`}
+                  className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${envBadgeClass(display.environment)}`}
                 >
-                  {error.environment}
+                  {display.environment}
                 </span>
               </dd>
             </div>
@@ -59,7 +65,7 @@ export function ErrorDetailPanel({
         </div>
 
         <dl className="mt-6 grid gap-4 rounded-lg border border-subtle bg-surface-muted p-4 md:grid-cols-2">
-          <Metadata label="Page URL" value={error.page_url} />
+          <Metadata label="Page URL" value={display.page_url} />
           <Metadata label="Request URL" value={error.request_url} />
           <Metadata label="Tenant" value={error.tenant_id} />
           <Metadata label="Occurrences" value={String(error.occurrence_count)} />
