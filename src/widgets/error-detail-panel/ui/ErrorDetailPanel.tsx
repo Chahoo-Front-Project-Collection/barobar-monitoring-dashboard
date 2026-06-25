@@ -21,10 +21,16 @@ export function ErrorDetailPanel({
 }: ErrorDetailPanelProps) {
   const selectedEvent = error.events.find((event) => event.replay_id === selectedReplayId);
   const display = {
-    page_url: selectedEvent?.page_url || error.page_url,
-    version: selectedEvent?.version || error.version,
-    environment: selectedEvent?.environment || error.environment,
+    page_url: selectedEvent?.page_url || "-",
+    version: selectedEvent?.version || "-",
+    environment: selectedEvent?.environment || "-",
   };
+
+  console.log("selectedReplayId", selectedReplayId);
+  console.log("selectedEvent", selectedEvent);
+  console.log("selectedEvent.environment", selectedEvent?.environment);
+  console.log("group environment", error.environment);
+
   const tableHeadings = [
     { label: "Occurred", key: "occurred_at" },
     { label: "User", key: "user_name" },
