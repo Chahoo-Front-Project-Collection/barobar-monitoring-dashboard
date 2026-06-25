@@ -222,12 +222,14 @@ test("paginates occurrence events in the error detail table", async () => {
 
   renderPage();
 
-  expect(await screen.findByText("Page 1 of 3 · 45 total")).toBeVisible();
+  expect(await screen.findByText(/Page 1 \/ 3/)).toBeVisible();
+  expect(screen.getByText(/총 45개/)).toBeVisible();
   expect(screen.getByText("https://service.example.com/page-1")).toBeVisible();
 
   await user.click(screen.getByRole("button", { name: "Next occurrence events page" }));
 
-  expect(await screen.findByText("Page 2 of 3 · 45 total")).toBeVisible();
+  expect(await screen.findByText(/Page 2 \/ 3/)).toBeVisible();
+  expect(screen.getByText(/총 45개/)).toBeVisible();
   expect(screen.getByText("https://service.example.com/page-2")).toBeVisible();
   expect(fetcher).toHaveBeenCalledWith(
     "http://localhost:4000/api/admin/errors/error_abc123?events_page=2&events_page_size=20",
