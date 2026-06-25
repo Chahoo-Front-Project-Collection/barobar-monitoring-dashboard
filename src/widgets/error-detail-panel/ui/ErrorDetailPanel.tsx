@@ -26,11 +26,6 @@ export function ErrorDetailPanel({
     environment: selectedEvent?.environment || "-",
   };
 
-  console.log("selectedReplayId", selectedReplayId);
-  console.log("selectedEvent", selectedEvent);
-  console.log("selectedEvent.environment", selectedEvent?.environment);
-  console.log("group environment", error.environment);
-
   const tableHeadings = [
     { label: "Occurred", key: "occurred_at" },
     { label: "User", key: "user_name" },
