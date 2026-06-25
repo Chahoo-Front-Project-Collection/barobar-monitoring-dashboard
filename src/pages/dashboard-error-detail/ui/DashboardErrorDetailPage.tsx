@@ -33,7 +33,7 @@ function DashboardErrorDetailContent({ errorId }: { errorId: string }) {
   const [deletedReplayIds, setDeletedReplayIds] = useState<Set<string>>(() => new Set());
   const [statusMessage, setStatusMessage] = useState<string>("");
   const visibleError = useMemo(
-    () => (query.data ? removeDeletedReplayIds(query.data, deletedReplayIds) : null),
+    () => (query.data ? removeDeletedReplayEvents(query.data, deletedReplayIds) : null),
     [deletedReplayIds, query.data],
   );
   const latestReplayEvent = useMemo(
@@ -58,7 +58,8 @@ function DashboardErrorDetailContent({ errorId }: { errorId: string }) {
         setSelectedReplayId((current) => (current === replayId ? "" : current));
         queryClient.setQueryData<ErrorDetail | undefined>(
           errorQueryKeys.detail(errorId),
-          (current) => (current ? removeDeletedReplayIds(current, new Set([replayId])) : current),
+          (current) =>
+            current ? removeDeletedReplayEvents(current, new Set([replayId])) : current,
         );
         queryClient.removeQueries({ queryKey: replayQueryKeys.detail(replayId) });
         void queryClient.invalidateQueries({ queryKey: errorQueryKeys.detail(errorId) });
@@ -188,7 +189,7 @@ function getConfirmDescription(
   errorId: string,
 ) {
   if (confirmState?.type === "replay") {
-    return `Replay ${confirmState.replayId}를 영구 삭제합니다. 삭제 후 복구할 수 없습니다.`;
+    return `Replay ${confirmState.replayId}와 연결된 occurrence event를 영구 삭제합니다. 삭제 후 복구할 수 없습니다.`;
   }
 
   if (confirmState?.type === "error-group") {
@@ -256,18 +257,24 @@ function ReplaySection({
   );
 }
 
-function removeDeletedReplayIds(error: ErrorDetail, deletedReplayIds: Set<string>): ErrorDetail {
+function removeDeletedReplayEvents(error: ErrorDetail, deletedReplayIds: Set<string>): ErrorDetail {
   if (deletedReplayIds.size === 0) {
+    return error;
+  }
+
+  const events = error.events.filter(
+    (event) => !event.replay_id || !deletedReplayIds.has(event.replay_id),
+  );
+  const removedCount = error.events.length - events.length;
+
+  if (removedCount === 0) {
     return error;
   }
 
   return {
     ...error,
-    events: error.events.map((event) =>
-      event.replay_id && deletedReplayIds.has(event.replay_id)
-        ? { ...event, replay_id: "" }
-        : event,
-    ),
+    events,
+    occurrence_count: Math.max(0, error.occurrence_count - removedCount),
   };
 }
 

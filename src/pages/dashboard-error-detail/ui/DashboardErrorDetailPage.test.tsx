@@ -176,11 +176,26 @@ test("renders retry and back actions when detail loading fails", async () => {
   expect(router.state.location.pathname).toBe("/dashboard/errors");
 });
 
-test("deletes the active replay and suppresses stale replay fallback", async () => {
+test("deletes the active replay and removes its occurrence event", async () => {
   const user = userEvent.setup();
+  const remainingEvent = {
+    ...createErrorDetailFixture().events[0],
+    id: "event_without_replay",
+    occurred_at: "2026-05-27T09:30:00.000Z",
+    replay_id: "",
+  };
   const fetcher = vi
     .fn<typeof fetch>()
-    .mockResolvedValueOnce(jsonResponse(apiSuccess(createErrorDetailFixture())))
+    .mockResolvedValueOnce(
+      jsonResponse(
+        apiSuccess(
+          createErrorDetailFixture({
+            occurrence_count: 2,
+            events: [createErrorDetailFixture().events[0], remainingEvent],
+          }),
+        ),
+      ),
+    )
     .mockResolvedValueOnce(jsonResponse(apiSuccess(createReplayDetailFixture())))
     .mockResolvedValueOnce(
       jsonResponse(
@@ -195,12 +210,8 @@ test("deletes the active replay and suppresses stale replay fallback", async () 
       jsonResponse(
         apiSuccess(
           createErrorDetailFixture({
-            events: [
-              {
-                ...createErrorDetailFixture().events[0],
-                replay_id: "",
-              },
-            ],
+            occurrence_count: 1,
+            events: [remainingEvent],
           }),
         ),
       ),
@@ -210,13 +221,18 @@ test("deletes the active replay and suppresses stale replay fallback", async () 
   renderPage();
 
   expect(await screen.findByText("Session replay")).toBeVisible();
+  expect(screen.getAllByText("replay_abc123").length).toBeGreaterThan(0);
   await user.click(screen.getByRole("button", { name: /delete replay/i }));
   expect(screen.getByRole("dialog", { name: "정말 삭제할까요?" })).toBeVisible();
-  expect(screen.getByText(/Replay replay_abc123를 영구 삭제합니다/)).toBeVisible();
+  expect(
+    screen.getByText(/Replay replay_abc123와 연결된 occurrence event를 영구 삭제합니다/),
+  ).toBeVisible();
   await user.click(screen.getByRole("button", { name: "삭제" }));
 
   expect(await screen.findByText("Replay 삭제가 완료되었습니다.")).toBeVisible();
   expect(screen.queryByText("Session replay")).not.toBeInTheDocument();
+  expect(screen.queryByText("replay_abc123")).not.toBeInTheDocument();
+  expect(screen.getByText("—")).toBeVisible();
   expect(fetcher).toHaveBeenCalledWith("http://localhost:4000/api/admin/replays/replay_abc123", {
     credentials: "include",
     headers: { Accept: "application/json" },
