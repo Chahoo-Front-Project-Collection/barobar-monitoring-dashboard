@@ -8,7 +8,7 @@ export type RequestJsonOptions = {
   baseUrl?: string;
   body?: unknown;
   fetcher?: Fetcher;
-  method?: "GET" | "POST";
+  method?: "DELETE" | "GET" | "POST";
   params?: QueryParams;
 };
 

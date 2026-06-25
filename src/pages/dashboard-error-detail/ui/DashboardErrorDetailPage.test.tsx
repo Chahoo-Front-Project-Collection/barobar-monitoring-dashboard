@@ -54,6 +54,7 @@ function apiFailure(message: string) {
 
 beforeEach(() => {
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
 test("renders error metadata and occurrence events", async () => {
@@ -173,4 +174,95 @@ test("renders retry and back actions when detail loading fails", async () => {
 
   await user.click(screen.getByRole("link", { name: "Back" }));
   expect(router.state.location.pathname).toBe("/dashboard/errors");
+});
+
+test("deletes the active replay and suppresses stale replay fallback", async () => {
+  const user = userEvent.setup();
+  const fetcher = vi
+    .fn<typeof fetch>()
+    .mockResolvedValueOnce(jsonResponse(apiSuccess(createErrorDetailFixture())))
+    .mockResolvedValueOnce(jsonResponse(apiSuccess(createReplayDetailFixture())))
+    .mockResolvedValueOnce(
+      jsonResponse(
+        apiSuccess({
+          deleted: true,
+          id: "replay_abc123",
+          cleanup: { status: "complete", deleted: [], missing: [], failed: [] },
+        }),
+      ),
+    )
+    .mockResolvedValueOnce(
+      jsonResponse(
+        apiSuccess(
+          createErrorDetailFixture({
+            events: [
+              {
+                ...createErrorDetailFixture().events[0],
+                replay_id: "",
+              },
+            ],
+          }),
+        ),
+      ),
+    );
+  vi.stubGlobal("fetch", fetcher);
+
+  renderPage();
+
+  expect(await screen.findByText("Session replay")).toBeVisible();
+  await user.click(screen.getByRole("button", { name: /delete replay/i }));
+  expect(screen.getByRole("dialog", { name: "정말 삭제할까요?" })).toBeVisible();
+  expect(screen.getByText(/Replay replay_abc123를 영구 삭제합니다/)).toBeVisible();
+  await user.click(screen.getByRole("button", { name: "삭제" }));
+
+  expect(await screen.findByText("Replay 삭제가 완료되었습니다.")).toBeVisible();
+  expect(screen.queryByText("Session replay")).not.toBeInTheDocument();
+  expect(fetcher).toHaveBeenCalledWith("http://localhost:4000/api/admin/replays/replay_abc123", {
+    credentials: "include",
+    headers: { Accept: "application/json" },
+    method: "DELETE",
+  });
+});
+
+test("deletes an error group and navigates back to the errors list", async () => {
+  const user = userEvent.setup();
+  const fetcher = vi
+    .fn<typeof fetch>()
+    .mockResolvedValueOnce(jsonResponse(apiSuccess(createErrorDetailFixture())))
+    .mockResolvedValueOnce(jsonResponse(apiSuccess(createReplayDetailFixture())))
+    .mockResolvedValueOnce(
+      jsonResponse(
+        apiSuccess({
+          deleted: true,
+          id: "error_abc123",
+          cleanup: { status: "complete", deleted: [], missing: [], failed: [] },
+        }),
+      ),
+    )
+    .mockResolvedValueOnce(
+      jsonResponse(
+        apiSuccess({
+          items: [],
+          pagination: { page: 1, page_size: 20, total: 0, total_pages: 1 },
+        }),
+      ),
+    );
+  vi.stubGlobal("fetch", fetcher);
+
+  const { router } = renderPage();
+
+  expect(
+    await screen.findByRole("heading", { name: "Request failed with status code 500" }),
+  ).toBeVisible();
+  await user.click(screen.getByRole("button", { name: /delete error group/i }));
+  expect(screen.getByRole("dialog", { name: "정말 삭제할까요?" })).toBeVisible();
+  expect(screen.getByText(/Error group error_abc123와 연결된 이벤트/)).toBeVisible();
+  await user.click(screen.getByRole("button", { name: "삭제" }));
+
+  expect(router.state.location.pathname).toBe("/dashboard/errors");
+  expect(fetcher).toHaveBeenCalledWith("http://localhost:4000/api/admin/errors/error_abc123", {
+    credentials: "include",
+    headers: { Accept: "application/json" },
+    method: "DELETE",
+  });
 });

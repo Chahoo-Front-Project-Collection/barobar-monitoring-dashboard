@@ -62,6 +62,29 @@ test("requestJson sends JSON bodies with credentials", async () => {
   });
 });
 
+test("requestJson supports DELETE requests", async () => {
+  const fetcher = vi.fn(async () =>
+    Response.json({
+      success: true,
+      message: "OK",
+      data: { deleted: true },
+    }),
+  );
+
+  const result = await requestJson<{ deleted: boolean }>("/api/admin/replays/replay_abc123", {
+    baseUrl: "http://api.test",
+    fetcher,
+    method: "DELETE",
+  });
+
+  expect(result).toEqual({ deleted: true });
+  expect(fetcher).toHaveBeenCalledWith("http://api.test/api/admin/replays/replay_abc123", {
+    credentials: "include",
+    headers: { Accept: "application/json" },
+    method: "DELETE",
+  });
+});
+
 test("requestJson throws ApiError when an API envelope reports a failure", async () => {
   const fetcher = vi.fn(
     async () =>
