@@ -100,8 +100,8 @@ export function ErrorDetailPanel({
             <div>
               <h2 className="text-base font-semibold text-text">Occurrence events</h2>
               <p className="mt-0.5 text-xs text-text-muted">
-                Page {eventsPagination.page} of {Math.max(1, eventsPagination.total_pages)} ·{" "}
-                {eventsPagination.total} total
+                Page {eventsPagination.page} / {Math.max(1, eventsPagination.total_pages)} &nbsp;
+                (총 {eventsPagination.total}개)
               </p>
             </div>
           </div>
@@ -117,7 +117,7 @@ export function ErrorDetailPanel({
               type="button"
             >
               <ChevronLeft aria-hidden="true" className="size-4" />
-              Prev
+              이전
             </button>
             <button
               aria-label="Next occurrence events page"
@@ -132,7 +132,7 @@ export function ErrorDetailPanel({
               }
               type="button"
             >
-              Next
+              다음
               <ChevronRight aria-hidden="true" className="size-4" />
             </button>
           </div>
