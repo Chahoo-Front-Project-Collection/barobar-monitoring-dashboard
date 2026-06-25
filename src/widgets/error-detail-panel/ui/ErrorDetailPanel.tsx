@@ -4,6 +4,7 @@ import type { ErrorDetail } from "@/entities/error";
 import { BrowserLabel, CompanyBadge } from "@/shared/ui";
 
 type ErrorDetailPanelProps = {
+  actions?: ReactNode;
   error: ErrorDetail;
   replaySection?: ReactNode;
   selectedReplayId: string;
@@ -14,6 +15,7 @@ const TH_CLASS = "px-5 py-3 text-xs font-semibold uppercase tracking-wide text-t
 const TD_CLASS = "px-5 py-3.5 align-middle";
 
 export function ErrorDetailPanel({
+  actions,
   error,
   replaySection,
   selectedReplayId,
@@ -62,6 +64,7 @@ export function ErrorDetailPanel({
                 </span>
               </dd>
             </div>
+            {actions}
           </div>
         </div>
 
