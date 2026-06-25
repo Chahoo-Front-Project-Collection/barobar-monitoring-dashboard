@@ -15,6 +15,8 @@ import { ErrorDetailPanel } from "@/widgets/error-detail-panel";
 import { ReplayContextPanel } from "@/widgets/replay-context-panel";
 import { ReplayPlayerPanel } from "@/widgets/replay-player-panel";
 
+const ERROR_EVENTS_PAGE_SIZE = 20;
+
 export function DashboardErrorDetailPage() {
   const { errorId = "" } = useParams();
 
@@ -24,7 +26,12 @@ export function DashboardErrorDetailPage() {
 function DashboardErrorDetailContent({ errorId }: { errorId: string }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const query = useErrorDetail(errorId);
+  const [eventsPage, setEventsPage] = useState(1);
+  const eventFilters = useMemo(
+    () => ({ events_page: eventsPage, events_page_size: ERROR_EVENTS_PAGE_SIZE }),
+    [eventsPage],
+  );
+  const query = useErrorDetail(errorId, eventFilters);
   const deleteErrorGroupMutation = useDeleteErrorGroup();
   const deleteReplayMutation = useDeleteReplay();
   const [confirmState, setConfirmState] = useState<
@@ -57,12 +64,12 @@ function DashboardErrorDetailContent({ errorId }: { errorId: string }) {
         setDeletedReplayIds((current) => new Set(current).add(replayId));
         setSelectedReplayId((current) => (current === replayId ? "" : current));
         queryClient.setQueryData<ErrorDetail | undefined>(
-          errorQueryKeys.detail(errorId),
+          errorQueryKeys.detail(errorId, eventFilters),
           (current) =>
             current ? removeDeletedReplayEvents(current, new Set([replayId])) : current,
         );
         queryClient.removeQueries({ queryKey: replayQueryKeys.detail(replayId) });
-        void queryClient.invalidateQueries({ queryKey: errorQueryKeys.detail(errorId) });
+        void queryClient.invalidateQueries({ queryKey: errorQueryKeys.detailRoot(errorId) });
         setStatusMessage(getDeleteStatusMessage("Replay", result.cleanup));
       },
       onError: (error) => {
@@ -76,11 +83,16 @@ function DashboardErrorDetailContent({ errorId }: { errorId: string }) {
     setConfirmState({ type: "error-group" });
   }
 
+  function handleEventsPageChange(page: number) {
+    setSelectedReplayId("");
+    setEventsPage(page);
+  }
+
   function confirmDeleteErrorGroup() {
     deleteErrorGroupMutation.mutate(errorId, {
       onSuccess: (result) => {
         setConfirmState(null);
-        queryClient.removeQueries({ queryKey: errorQueryKeys.detail(errorId) });
+        queryClient.removeQueries({ queryKey: errorQueryKeys.detailRoot(errorId) });
         void queryClient.invalidateQueries({ queryKey: errorQueryKeys.all });
         setStatusMessage(getDeleteStatusMessage("Error group", result.cleanup));
         navigate("/dashboard/errors");
@@ -142,6 +154,9 @@ function DashboardErrorDetailContent({ errorId }: { errorId: string }) {
         <>
           <ErrorDetailPanel
             error={visibleError}
+            eventsPagination={visibleError.events_pagination}
+            isEventsPageFetching={query.isFetching}
+            onEventsPageChange={handleEventsPageChange}
             onSelectReplayId={setSelectedReplayId}
             selectedReplayId={activeReplayId}
             replaySection={

@@ -71,16 +71,52 @@ test("fetchErrorDetail calls the Admin error detail endpoint", async () => {
   const response = createErrorDetailFixture();
   const fetcher = vi.fn(async () => Response.json(apiSuccess(response)));
 
-  const result = await fetchErrorDetail("error_abc123", {
-    baseUrl: "http://api.test",
-    fetcher,
-  });
+  const result = await fetchErrorDetail(
+    "error_abc123",
+    { events_page: 2, events_page_size: 20 },
+    {
+      baseUrl: "http://api.test",
+      fetcher,
+    },
+  );
 
   expect(result).toEqual(response);
-  expect(fetcher).toHaveBeenCalledWith("http://api.test/api/admin/errors/error_abc123", {
-    credentials: "include",
-    headers: { Accept: "application/json" },
-    method: "GET",
+  expect(fetcher).toHaveBeenCalledWith(
+    "http://api.test/api/admin/errors/error_abc123?events_page=2&events_page_size=20",
+    {
+      credentials: "include",
+      headers: { Accept: "application/json" },
+      method: "GET",
+    },
+  );
+});
+
+test("fetchErrorDetail normalizes camelCase event pagination", async () => {
+  const fetcher = vi.fn(async () =>
+    Response.json(
+      apiSuccess({
+        ...createErrorDetailFixture({ events_pagination: undefined }),
+        eventsPagination: {
+          page: 3,
+          pageSize: 10,
+          total: 45,
+          totalPages: 5,
+        },
+      }),
+    ),
+  );
+
+  const result = await fetchErrorDetail(
+    "error_abc123",
+    {},
+    { baseUrl: "http://api.test", fetcher },
+  );
+
+  expect(result.events_pagination).toEqual({
+    page: 3,
+    page_size: 10,
+    total: 45,
+    total_pages: 5,
   });
 });
 

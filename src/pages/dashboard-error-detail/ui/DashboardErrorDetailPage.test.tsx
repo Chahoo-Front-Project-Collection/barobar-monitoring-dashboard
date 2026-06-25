@@ -64,6 +64,7 @@ test("renders error metadata and occurrence events", async () => {
       jsonResponse(
         apiSuccess(
           createErrorDetailFixture({
+            events_pagination: { page: 1, page_size: 20, total: 2, total_pages: 1 },
             events: [
               {
                 id: "event_old",
@@ -148,11 +149,14 @@ test("renders error metadata and occurrence events", async () => {
   expect(screen.getByText("3.1.0")).toBeVisible();
   expect(screen.getByText("development")).toBeVisible();
 
-  expect(fetcher).toHaveBeenCalledWith("http://localhost:4000/api/admin/errors/error_abc123", {
-    credentials: "include",
-    headers: { Accept: "application/json" },
-    method: "GET",
-  });
+  expect(fetcher).toHaveBeenCalledWith(
+    "http://localhost:4000/api/admin/errors/error_abc123?events_page=1&events_page_size=20",
+    {
+      credentials: "include",
+      headers: { Accept: "application/json" },
+      method: "GET",
+    },
+  );
   expect(fetcher).toHaveBeenLastCalledWith("http://localhost:4000/api/admin/replays/replay_old", {
     credentials: "include",
     headers: { Accept: "application/json" },
@@ -176,6 +180,67 @@ test("renders retry and back actions when detail loading fails", async () => {
   expect(router.state.location.pathname).toBe("/dashboard/errors");
 });
 
+test("paginates occurrence events in the error detail table", async () => {
+  const user = userEvent.setup();
+  const pageOneEvent = {
+    ...createErrorDetailFixture().events[0],
+    id: "event_page_1",
+    page_url: "https://service.example.com/page-1",
+    replay_id: "",
+  };
+  const pageTwoEvent = {
+    ...createErrorDetailFixture().events[0],
+    id: "event_page_2",
+    page_url: "https://service.example.com/page-2",
+    replay_id: "",
+  };
+  const fetcher = vi
+    .fn<typeof fetch>()
+    .mockResolvedValueOnce(
+      jsonResponse(
+        apiSuccess(
+          createErrorDetailFixture({
+            occurrence_count: 45,
+            events: [pageOneEvent],
+            events_pagination: { page: 1, page_size: 20, total: 45, total_pages: 3 },
+          }),
+        ),
+      ),
+    )
+    .mockResolvedValueOnce(
+      jsonResponse(
+        apiSuccess(
+          createErrorDetailFixture({
+            occurrence_count: 45,
+            events: [pageTwoEvent],
+            events_pagination: { page: 2, page_size: 20, total: 45, total_pages: 3 },
+          }),
+        ),
+      ),
+    );
+  vi.stubGlobal("fetch", fetcher);
+
+  renderPage();
+
+  expect(await screen.findByText(/Page 1 \/ 3/)).toBeVisible();
+  expect(screen.getByText(/총 45개/)).toBeVisible();
+  expect(screen.getByText("https://service.example.com/page-1")).toBeVisible();
+
+  await user.click(screen.getByRole("button", { name: "Next occurrence events page" }));
+
+  expect(await screen.findByText(/Page 2 \/ 3/)).toBeVisible();
+  expect(screen.getByText(/총 45개/)).toBeVisible();
+  expect(screen.getByText("https://service.example.com/page-2")).toBeVisible();
+  expect(fetcher).toHaveBeenCalledWith(
+    "http://localhost:4000/api/admin/errors/error_abc123?events_page=2&events_page_size=20",
+    {
+      credentials: "include",
+      headers: { Accept: "application/json" },
+      method: "GET",
+    },
+  );
+});
+
 test("deletes the active replay and removes its occurrence event", async () => {
   const user = userEvent.setup();
   const remainingEvent = {
@@ -192,6 +257,7 @@ test("deletes the active replay and removes its occurrence event", async () => {
           createErrorDetailFixture({
             occurrence_count: 2,
             events: [createErrorDetailFixture().events[0], remainingEvent],
+            events_pagination: { page: 1, page_size: 20, total: 2, total_pages: 1 },
           }),
         ),
       ),
@@ -212,6 +278,7 @@ test("deletes the active replay and removes its occurrence event", async () => {
           createErrorDetailFixture({
             occurrence_count: 1,
             events: [remainingEvent],
+            events_pagination: { page: 1, page_size: 20, total: 1, total_pages: 1 },
           }),
         ),
       ),

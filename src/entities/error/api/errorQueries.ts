@@ -2,6 +2,7 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import type {
   ErrorDetail,
+  ErrorDetailFilters,
   ErrorEvent,
   ErrorGroup,
   ErrorGroupFilters,
@@ -12,7 +13,9 @@ import { requestJson, type RequestJsonOptions } from "@/shared/api";
 export const errorQueryKeys = {
   all: ["errors"] as const,
   groups: (filters: ErrorGroupFilters) => [...errorQueryKeys.all, "groups", filters] as const,
-  detail: (errorId: string) => [...errorQueryKeys.all, "detail", errorId] as const,
+  detailRoot: (errorId: string) => [...errorQueryKeys.all, "detail", errorId] as const,
+  detail: (errorId: string, filters: ErrorDetailFilters = {}) =>
+    [...errorQueryKeys.detailRoot(errorId), filters] as const,
 };
 
 export async function fetchErrorGroups(
@@ -27,11 +30,15 @@ export async function fetchErrorGroups(
   return normalizeErrorGroupsResponse(response, filters);
 }
 
-export async function fetchErrorDetail(errorId: string, options?: RequestJsonOptions) {
-  const response = await requestJson<unknown>(
-    `/api/admin/errors/${encodeURIComponent(errorId)}`,
-    options,
-  );
+export async function fetchErrorDetail(
+  errorId: string,
+  filters: ErrorDetailFilters = {},
+  options?: RequestJsonOptions,
+) {
+  const response = await requestJson<unknown>(`/api/admin/errors/${encodeURIComponent(errorId)}`, {
+    ...options,
+    params: filters,
+  });
 
   return normalizeErrorDetail(response);
 }
@@ -43,11 +50,11 @@ export function errorGroupsQueryOptions(filters: ErrorGroupFilters) {
   });
 }
 
-export function errorDetailQueryOptions(errorId: string) {
+export function errorDetailQueryOptions(errorId: string, filters: ErrorDetailFilters = {}) {
   return queryOptions({
     enabled: errorId.length > 0,
-    queryKey: errorQueryKeys.detail(errorId),
-    queryFn: () => fetchErrorDetail(errorId),
+    queryKey: errorQueryKeys.detail(errorId, filters),
+    queryFn: () => fetchErrorDetail(errorId, filters),
   });
 }
 
@@ -55,8 +62,8 @@ export function useErrorGroups(filters: ErrorGroupFilters) {
   return useQuery(errorGroupsQueryOptions(filters));
 }
 
-export function useErrorDetail(errorId: string) {
-  return useQuery(errorDetailQueryOptions(errorId));
+export function useErrorDetail(errorId: string, filters: ErrorDetailFilters = {}) {
+  return useQuery(errorDetailQueryOptions(errorId, filters));
 }
 
 function normalizeErrorGroupsResponse(
@@ -87,11 +94,28 @@ function normalizeErrorGroupsResponse(
 function normalizeErrorDetail(response: unknown): ErrorDetail {
   const responseRecord = readRecord(response);
   const rawEvents = readArray(responseRecord.events, responseRecord.errorEvents);
+  const group = normalizeErrorGroup(responseRecord);
+  const rawPagination = readRecord(
+    responseRecord.events_pagination ?? responseRecord.eventsPagination,
+  );
+  const page = readNumber(rawPagination, ["page"]) || 1;
+  const pageSize =
+    readNumber(rawPagination, ["page_size", "pageSize", "limit"]) || rawEvents.length || 20;
+  const total = readNumber(rawPagination, ["total"]) || group.occurrence_count || rawEvents.length;
+  const totalPages =
+    readNumber(rawPagination, ["total_pages", "totalPages"]) ||
+    Math.max(1, Math.ceil(total / pageSize));
 
   return {
-    ...normalizeErrorGroup(responseRecord),
+    ...group,
     stack: readString(responseRecord, ["stack"]),
     events: rawEvents.map(normalizeErrorEvent),
+    events_pagination: {
+      page,
+      page_size: pageSize,
+      total,
+      total_pages: totalPages,
+    },
   };
 }
 

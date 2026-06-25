@@ -1,13 +1,16 @@
-import { ChartNoAxesGantt } from "lucide-react";
+import { ChartNoAxesGantt, ChevronLeft, ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
-import type { ErrorDetail } from "@/entities/error";
+import type { ErrorDetail, ErrorEventsPagination } from "@/entities/error";
 import { BrowserLabel, CompanyBadge } from "@/shared/ui";
 
 type ErrorDetailPanelProps = {
   actions?: ReactNode;
   error: ErrorDetail;
+  eventsPagination?: ErrorEventsPagination;
+  isEventsPageFetching?: boolean;
   replaySection?: ReactNode;
   selectedReplayId: string;
+  onEventsPageChange?: (page: number) => void;
   onSelectReplayId: (replayId: string) => void;
 };
 
@@ -17,8 +20,11 @@ const TD_CLASS = "px-5 py-3.5 align-middle";
 export function ErrorDetailPanel({
   actions,
   error,
+  eventsPagination = error.events_pagination,
+  isEventsPageFetching = false,
   replaySection,
   selectedReplayId,
+  onEventsPageChange,
   onSelectReplayId,
 }: ErrorDetailPanelProps) {
   const selectedEvent = error.events.find((event) => event.replay_id === selectedReplayId);
@@ -88,9 +94,48 @@ export function ErrorDetailPanel({
       {replaySection}
 
       <section className="overflow-hidden rounded-xl border border-subtle bg-surface">
-        <div className="flex items-center gap-2 border-b border-subtle px-5 py-3.5">
-          <ChartNoAxesGantt aria-hidden="true" className="size-5 text-text-muted" />
-          <h2 className="text-base font-semibold text-text">Occurrence events</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-subtle px-5 py-3.5">
+          <div className="flex items-center gap-2">
+            <ChartNoAxesGantt aria-hidden="true" className="size-5 text-text-muted" />
+            <div>
+              <h2 className="text-base font-semibold text-text">Occurrence events</h2>
+              <p className="mt-0.5 text-xs text-text-muted">
+                Page {eventsPagination.page} / {Math.max(1, eventsPagination.total_pages)} &nbsp;
+                (총 {eventsPagination.total}개)
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {isEventsPageFetching ? (
+              <span className="text-xs font-semibold text-text-muted">Loading...</span>
+            ) : null}
+            <button
+              aria-label="Previous occurrence events page"
+              className="inline-flex items-center gap-1 rounded-lg border border-subtle bg-surface px-3 py-2 text-sm font-semibold text-text-muted disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={eventsPagination.page <= 1 || isEventsPageFetching}
+              onClick={() => onEventsPageChange?.(Math.max(1, eventsPagination.page - 1))}
+              type="button"
+            >
+              <ChevronLeft aria-hidden="true" className="size-4" />
+              이전
+            </button>
+            <button
+              aria-label="Next occurrence events page"
+              className="inline-flex items-center gap-1 rounded-lg border border-subtle bg-surface px-3 py-2 text-sm font-semibold text-text-muted disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={
+                eventsPagination.page >= eventsPagination.total_pages || isEventsPageFetching
+              }
+              onClick={() =>
+                onEventsPageChange?.(
+                  Math.min(eventsPagination.total_pages, eventsPagination.page + 1),
+                )
+              }
+              type="button"
+            >
+              다음
+              <ChevronRight aria-hidden="true" className="size-4" />
+            </button>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse text-left text-sm">

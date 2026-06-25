@@ -41,9 +41,17 @@ export type ErrorGroupsResponse = {
   };
 };
 
+export type ErrorEventsPagination = {
+  page: number;
+  page_size: number;
+  total: number;
+  total_pages: number;
+};
+
 export type ErrorDetail = ErrorGroup & {
   stack: string;
   events: ErrorEvent[];
+  events_pagination: ErrorEventsPagination;
 };
 
 export type ErrorGroupFilters = {
@@ -54,4 +62,9 @@ export type ErrorGroupFilters = {
   date_to?: string;
   page?: number;
   page_size?: number;
+};
+
+export type ErrorDetailFilters = {
+  events_page?: number;
+  events_page_size?: number;
 };
