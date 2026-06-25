@@ -14,10 +14,10 @@ export function DashboardErrorsPage() {
   const query = useErrorGroups(filters);
 
   return (
-    <section className="grid gap-5">
+    <section className="grid gap-3 sm:gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="mt-1 text-3xl font-semibold text-text">Errors</h1>
+          <h1 className="text-lg sm:text-3xl sm:mt-1 font-semibold text-text">Errors</h1>
         </div>
       </div>
 

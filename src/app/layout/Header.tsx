@@ -1,5 +1,5 @@
 import { LogOut } from "lucide-react";
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 
 import logoIcon from "@/assets/icons/logo.webp";
 import { useAdminLogout } from "@/features/admin-auth";
@@ -16,7 +16,11 @@ export function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between border-b border-subtle bg-surface px-5">
-      <div className="flex items-center gap-3">
+      <NavLink
+        className={"flex items-center gap-3"}
+        title={routes.ERRORS.label}
+        to={routes.ERRORS.path}
+      >
         <span className="flex size-9 items-center justify-center">
           <img src={logoIcon} alt="Barobar Logo" className="h-9 w-8" />
         </span>
@@ -25,7 +29,7 @@ export function Header() {
           <p className="text-lg font-extrabold leading-none text-primary">바로바 모니터링</p>
           <p className="mt-1 text-xs font-medium text-text-subtle">Replay-based</p>
         </div>
-      </div>
+      </NavLink>
 
       <button
         className="inline-flex h-9 items-center justify-center gap-2 border border-subtle bg-surface px-3 text-xs font-semibold text-text-muted transition-colors hover:bg-surface-muted hover:text-text disabled:text-text-subtle rounded-lg"

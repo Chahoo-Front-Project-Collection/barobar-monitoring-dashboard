@@ -112,6 +112,31 @@ test("submits filters back into the route search params", async () => {
   });
 });
 
+test("reset clears visible filter fields and route search params", async () => {
+  const user = userEvent.setup();
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => jsonResponse(apiSuccess(createErrorGroupsFixture()))),
+  );
+
+  const { router } = renderPage(
+    "/dashboard/errors?message=timeout&environment=production&version=3.2.0&date_from=2026-05-27&date_to=2026-05-28&page=2",
+  );
+
+  await screen.findByRole("cell", { name: "Request failed with status code 500" });
+  await user.click(screen.getByRole("button", { name: "Reset" }));
+
+  expect(screen.getByLabelText("에러 메시지 검색")).toHaveValue("");
+  expect(screen.getByLabelText("환경")).toHaveValue("");
+  expect(screen.getByLabelText("버전")).toHaveValue("");
+  expect(screen.getByLabelText("From")).toHaveValue("");
+  expect(screen.getByLabelText("To")).toHaveValue("");
+
+  await waitFor(() => {
+    expect(router.state.location.search).toBe("?page=1");
+  });
+});
+
 test("renders an empty state when no error groups exist", async () => {
   vi.stubGlobal(
     "fetch",
